@@ -3,1298 +3,841 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="description" content="Complete Finance Tracker - Work Log, Invoices, Budgets, and More">
-  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Finance Tracker">
   <meta name="theme-color" content="#10b981">
-  <title>Finance Tracker - Complete</title>
-  
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Work+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <title>Finance Tracker</title>
   
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
     body {
-      font-family: 'Work Sans', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
       min-height: 100vh;
+      padding: 10px;
     }
     
-    h1, h2, h3 {
-      font-family: 'Playfair Display', serif;
+    .container { max-width: 1200px; margin: 0 auto; }
+    
+    .header {
+      text-align: center;
+      padding: 30px 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      margin-bottom: 20px;
     }
     
-    .glass-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+    h1 {
+      font-size: clamp(32px, 6vw, 48px);
+      font-weight: 800;
+      background: linear-gradient(90deg, #10b981, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      margin-bottom: 20px;
+      padding-bottom: 5px;
+    }
+    
+    .tab {
+      padding: 12px 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    
+    .tab:hover { background: rgba(255,255,255,0.1); }
+    .tab.active {
+      background: #10b981;
+      border-color: #10b981;
+    }
+    
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .card h2 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #10b981;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    input, select, button {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      font-size: 14px;
+    }
+    
+    input::placeholder { color: rgba(255,255,255,0.5); }
+    
+    button {
+      background: #10b981;
+      border-color: #10b981;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    button:hover {
+      background: #059669;
+      transform: translateY(-2px);
+    }
+    
+    .btn-secondary {
+      background: #06b6d4;
+      border-color: #06b6d4;
+    }
+    
+    .btn-secondary:hover { background: #0891b2; }
+    
+    .btn-danger {
+      background: #ef4444;
+      border-color: #ef4444;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    
+    .btn-danger:hover { background: #dc2626; }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    
+    th {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 2px solid rgba(255,255,255,0.2);
+      font-weight: 600;
+      color: #10b981;
+    }
+    
+    td {
+      padding: 10px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    tr:hover { background: rgba(255,255,255,0.05); }
+    
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    
+    .stat-card {
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #10b981;
+      margin: 10px 0;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: #94a3b8;
+    }
+    
+    .hidden { display: none !important; }
+    
+    .overflow-auto { overflow-x: auto; }
+    
+    .mb-2 { margin-bottom: 8px; }
+    .mb-4 { margin-bottom: 16px; }
+    
+    .preview {
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    
+    .total-row {
+      background: rgba(16, 185, 129, 0.1);
+      font-weight: bold;
+    }
+    
+    @media (max-width: 768px) {
+      .form-grid { grid-template-columns: 1fr; }
+      table { font-size: 12px; }
+      th, td { padding: 8px 4px; }
     }
     
     @media print {
-      body { background: white !important; }
+      body { background: white; color: black; }
       .no-print { display: none !important; }
-      #invoice-content { display: block !important; }
-    }
-    
-    .loading-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100vh;
-      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-    
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid rgba(16, 185, 129, 0.1);
-      border-top-color: #10b981;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <div class="loading-screen" id="loading-screen">
-    <div class="spinner"></div>
-    <div class="mt-4 text-emerald-400 text-lg font-semibold">Loading Finance Tracker...</div>
-  </div>
-  
-  <div id="root"></div>
-  
-  <!-- React & ReactDOM -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  
-  <!-- Recharts for charts -->
-  <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
-  
-  <!-- Babel Standalone for JSX -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  
-  <!-- Main App -->
-  <script type="text/babel">
-    const { useState, useEffect } = React;
-    const { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
+  <div class="container">
+    <div class="header">
+      <h1>💰 Finance Tracker</h1>
+      <p style="color: #94a3b8;">Your Complete Work & Budget Manager</p>
+    </div>
     
-    // Mock window.storage if not available
-    if (!window.storage) {
-      window.storage = {
-        get: async (key) => {
-          const value = localStorage.getItem(key);
-          return value ? { key, value, shared: false } : null;
-        },
-        set: async (key, value) => {
-          localStorage.setItem(key, value);
-          return { key, value, shared: false };
-        },
-        delete: async (key) => {
-          localStorage.removeItem(key);
-          return { key, deleted: true, shared: false };
-        },
-        list: async (prefix) => {
-          const keys = Object.keys(localStorage).filter(k => !prefix || k.startsWith(prefix));
-          return { keys, prefix, shared: false };
-        }
-      };
-    }
+    <div class="tabs no-print">
+      <div class="tab active" data-tab="dashboard">📊 Dashboard</div>
+      <div class="tab" data-tab="work1">⏰ Work 1</div>
+      <div class="tab" data-tab="work2">⏰ Work 2</div>
+      <div class="tab" data-tab="invoice">📄 Invoice</div>
+      <div class="tab" data-tab="budgets">💸 Budgets</div>
+      <div class="tab" data-tab="salary">💰 Sahod</div>
+    </div>
     
-    const FinanceTracker = () => {
-      const [activeTab, setActiveTab] = useState('dashboard');
-      const [work1Entries, setWork1Entries] = useState([]);
-      const [work2Entries, setWork2Entries] = useState([]);
-      const [budgets, setBudgets] = useState([]);
-      const [salaries, setSalaries] = useState([]);
-      const [expenses, setExpenses] = useState([]);
-      const [savingsGoals, setSavingsGoals] = useState([]);
-      const [loading, setLoading] = useState(true);
+    <!-- Dashboard Tab -->
+    <div id="tab-dashboard" class="tab-content">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div style="font-size: 32px;">📅</div>
+          <div class="stat-value" id="stat-days">0</div>
+          <div class="stat-label">Work Days</div>
+        </div>
+        <div class="stat-card">
+          <div style="font-size: 32px;">⏰</div>
+          <div class="stat-value" id="stat-hours">0h</div>
+          <div class="stat-label">Total Hours</div>
+        </div>
+        <div class="stat-card">
+          <div style="font-size: 32px;">💰</div>
+          <div class="stat-value" id="stat-earnings">₱0</div>
+          <div class="stat-label">Total Earnings</div>
+        </div>
+        <div class="stat-card">
+          <div style="font-size: 32px;">💸</div>
+          <div class="stat-value" id="stat-expenses">₱0</div>
+          <div class="stat-label">Total Expenses</div>
+        </div>
+      </div>
       
-      const [cutoffMonth, setCutoffMonth] = useState(() => {
-        const now = new Date();
-        return String(now.getFullYear()) + '-' + String(now.getMonth() + 1).padStart(2, '0');
-      });
-      const [cutoffPeriod, setCutoffPeriod] = useState('1');
-      const [invoiceData, setInvoiceData] = useState(null);
-      
-      const work1Config = {
-        name: 'Work 1',
-        dailyRate: 1000,
-        hourlyRate: 125,
-        standardHours: 8
-      };
-      
-      const work2Config = {
-        name: 'Work 2',
-        dailyRate: 1200,
-        hourlyRate: 150,
-        standardHours: 8
-      };
-      
-      const [work1Form, setWork1Form] = useState({
-        date: '', timeIn: '', timeOut: '', otHours: 0, notes: ''
-      });
-      
-      const [work2Form, setWork2Form] = useState({
-        date: '', timeIn: '', timeOut: '', otHours: 0, notes: ''
-      });
-      
-      const [budgetForm, setBudgetForm] = useState({
-        category: '', monthlyLimit: 0
-      });
-      
-      const [expenseForm, setExpenseForm] = useState({
-        amount: 0, category: '', date: '', description: ''
-      });
-      
-      const [salaryForm, setSalaryForm] = useState({
-        amount: 0, date: '', period: '', source: 'Regular', notes: ''
-      });
-      
-      const [goalForm, setGoalForm] = useState({
-        name: '', targetAmount: 0, currentAmount: 0, deadline: ''
-      });
-      
-      useEffect(() => {
-        const loadData = async () => {
-          try {
-            const [w1, w2, b, s, e, g] = await Promise.all([
-              window.storage.get('work1Entries'),
-              window.storage.get('work2Entries'),
-              window.storage.get('budgets'),
-              window.storage.get('salaries'),
-              window.storage.get('expenses'),
-              window.storage.get('savingsGoals')
-            ]);
-            
-            if (w1 && w1.value) setWork1Entries(JSON.parse(w1.value));
-            if (w2 && w2.value) setWork2Entries(JSON.parse(w2.value));
-            if (b && b.value) setBudgets(JSON.parse(b.value));
-            if (s && s.value) setSalaries(JSON.parse(s.value));
-            if (e && e.value) setExpenses(JSON.parse(e.value));
-            if (g && g.value) setSavingsGoals(JSON.parse(g.value));
-          } catch (error) {
-            console.log('Starting fresh');
-          }
-          setTimeout(() => {
-            setLoading(false);
-            document.getElementById('loading-screen').style.display = 'none';
-          }, 800);
-        };
-        loadData();
-      }, []);
-      
-      const saveData = async (type, data) => {
-        try {
-          await window.storage.set(type, JSON.stringify(data));
-        } catch (error) {
-          console.error('Save error:', error);
-        }
-      };
-      
-      const calculateHours = (timeIn, timeOut) => {
-        if (!timeIn || !timeOut) return 0;
-        const parts1 = timeIn.split(':');
-        const parts2 = timeOut.split(':');
-        const inHour = parseInt(parts1[0]);
-        const inMin = parseInt(parts1[1]);
-        const outHour = parseInt(parts2[0]);
-        const outMin = parseInt(parts2[1]);
-        const inMinutes = inHour * 60 + inMin;
-        const outMinutes = outHour * 60 + outMin;
-        return ((outMinutes - inMinutes) / 60).toFixed(2);
-      };
-      
-      const addWork1Entry = async () => {
-        if (!work1Form.date || !work1Form.timeIn || !work1Form.timeOut) return;
+      <div class="card">
+        <h2>Welcome! 🎉</h2>
+        <p style="line-height: 1.8; color: #cbd5e1;">
+          Track your work hours, generate invoices, manage budgets, and monitor expenses all in one place. 
+          Navigate through the tabs to access different features. Your data is saved automatically!
+        </p>
+      </div>
+    </div>
+    
+    <!-- Work 1 Tab -->
+    <div id="tab-work1" class="tab-content hidden">
+      <div class="card">
+        <h2>Work 1 Timesheet</h2>
+        <p class="mb-4" style="color: #94a3b8;">Daily Rate: ₱1,000 | Hourly: ₱125 | OT: ₱187.50/hr (150%)</p>
         
-        const regularHours = parseFloat(calculateHours(work1Form.timeIn, work1Form.timeOut));
-        const otHours = parseFloat(work1Form.otHours) || 0;
-        const totalHours = regularHours + otHours;
-        const regularPay = regularHours * work1Config.hourlyRate;
-        const otPay = otHours * work1Config.hourlyRate * 1.5;
-        const totalPay = regularPay + otPay;
+        <div class="form-grid">
+          <input type="date" id="w1-date" required>
+          <input type="time" id="w1-timein" placeholder="Time In" required>
+          <input type="time" id="w1-timeout" placeholder="Time Out" required>
+          <input type="number" id="w1-ot" placeholder="OT Hours" step="0.5" value="0">
+          <button onclick="addWork1Entry()">+ Add Entry</button>
+        </div>
         
-        const newEntry = {
-          ...work1Form,
-          id: Date.now(),
-          regularHours,
-          otHours,
-          totalHours,
-          regularPay,
-          otPay,
-          totalPay
-        };
+        <div id="w1-preview" class="preview hidden"></div>
         
-        const updated = [...work1Entries, newEntry];
-        setWork1Entries(updated);
-        await saveData('work1Entries', updated);
-        setWork1Form({ date: '', timeIn: '', timeOut: '', otHours: 0, notes: '' });
-      };
+        <div class="overflow-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th class="text-right">Reg Hrs</th>
+                <th class="text-right">OT Hrs</th>
+                <th class="text-right">Reg Pay</th>
+                <th class="text-right">OT Pay</th>
+                <th class="text-right">Total</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="w1-table"></tbody>
+          </table>
+        </div>
+        
+        <button class="btn-secondary" onclick="transferToSalary('work1')" style="margin-top: 15px;">
+          Transfer to Salary →
+        </button>
+      </div>
+    </div>
+    
+    <!-- Work 2 Tab -->
+    <div id="tab-work2" class="tab-content hidden">
+      <div class="card">
+        <h2>Work 2 Timesheet</h2>
+        <p class="mb-4" style="color: #94a3b8;">Daily Rate: ₱1,200 | Hourly: ₱150 | OT: ₱225/hr (150%)</p>
+        
+        <div class="form-grid">
+          <input type="date" id="w2-date" required>
+          <input type="time" id="w2-timein" placeholder="Time In" required>
+          <input type="time" id="w2-timeout" placeholder="Time Out" required>
+          <input type="number" id="w2-ot" placeholder="OT Hours" step="0.5" value="0">
+          <button onclick="addWork2Entry()">+ Add Entry</button>
+        </div>
+        
+        <div id="w2-preview" class="preview hidden"></div>
+        
+        <div class="overflow-auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th class="text-right">Reg Hrs</th>
+                <th class="text-right">OT Hrs</th>
+                <th class="text-right">Reg Pay</th>
+                <th class="text-right">OT Pay</th>
+                <th class="text-right">Total</th>
+                <th class="text-center">Action</th>
+              </tr>
+            </thead>
+            <tbody id="w2-table"></tbody>
+          </table>
+        </div>
+        
+        <button class="btn-secondary" onclick="transferToSalary('work2')" style="margin-top: 15px;">
+          Transfer to Salary →
+        </button>
+      </div>
+    </div>
+    
+    <!-- Invoice Tab -->
+    <div id="tab-invoice" class="tab-content hidden">
+      <div class="card no-print">
+        <h2>Generate Cutoff Invoice</h2>
+        <div class="form-grid">
+          <input type="month" id="cutoff-month">
+          <select id="cutoff-period">
+            <option value="1">1st Half (1-15)</option>
+            <option value="2">2nd Half (16-End)</option>
+          </select>
+          <button onclick="generateInvoice()">Generate Invoice</button>
+        </div>
+      </div>
       
-      const addWork2Entry = async () => {
-        if (!work2Form.date || !work2Form.timeIn || !work2Form.timeOut) return;
-        
-        const regularHours = parseFloat(calculateHours(work2Form.timeIn, work2Form.timeOut));
-        const otHours = parseFloat(work2Form.otHours) || 0;
-        const totalHours = regularHours + otHours;
-        const regularPay = regularHours * work2Config.hourlyRate;
-        const otPay = otHours * work2Config.hourlyRate * 1.5;
-        const totalPay = regularPay + otPay;
-        
-        const newEntry = {
-          ...work2Form,
-          id: Date.now(),
-          regularHours,
-          otHours,
-          totalHours,
-          regularPay,
-          otPay,
-          totalPay
-        };
-        
-        const updated = [...work2Entries, newEntry];
-        setWork2Entries(updated);
-        await saveData('work2Entries', updated);
-        setWork2Form({ date: '', timeIn: '', timeOut: '', otHours: 0, notes: '' });
-      };
-      
-      const deleteWork1Entry = async (id) => {
-        const updated = work1Entries.filter(e => e.id !== id);
-        setWork1Entries(updated);
-        await saveData('work1Entries', updated);
-      };
-      
-      const deleteWork2Entry = async (id) => {
-        const updated = work2Entries.filter(e => e.id !== id);
-        setWork2Entries(updated);
-        await saveData('work2Entries', updated);
-      };
-      
-      const addBudget = async () => {
-        if (!budgetForm.category || !budgetForm.monthlyLimit) return;
-        const newBudget = { ...budgetForm, id: Date.now(), spent: 0 };
-        const updated = [...budgets, newBudget];
-        setBudgets(updated);
-        await saveData('budgets', updated);
-        setBudgetForm({ category: '', monthlyLimit: 0 });
-      };
-      
-      const addExpense = async () => {
-        if (!expenseForm.amount || !expenseForm.category || !expenseForm.date) return;
-        
-        const newExpense = { ...expenseForm, id: Date.now() };
-        const updated = [...expenses, newExpense];
-        setExpenses(updated);
-        await saveData('expenses', updated);
-        
-        const expenseDate = new Date(expenseForm.date);
-        const expenseMonth = String(expenseDate.getFullYear()) + '-' + String(expenseDate.getMonth() + 1).padStart(2, '0');
-        
-        const updatedBudgets = budgets.map(budget => {
-          if (budget.category === expenseForm.category) {
-            const currentMonth = String(new Date().getFullYear()) + '-' + String(new Date().getMonth() + 1).padStart(2, '0');
-            if (expenseMonth === currentMonth) {
-              return { ...budget, spent: (budget.spent || 0) + parseFloat(expenseForm.amount) };
-            }
-          }
-          return budget;
-        });
-        setBudgets(updatedBudgets);
-        await saveData('budgets', updatedBudgets);
-        
-        setExpenseForm({ amount: 0, category: '', date: '', description: '' });
-      };
-      
-      const deleteExpense = async (id) => {
-        const expense = expenses.find(e => e.id === id);
-        if (!expense) return;
-        
-        const updated = expenses.filter(e => e.id !== id);
-        setExpenses(updated);
-        await saveData('expenses', updated);
-        
-        const expenseDate = new Date(expense.date);
-        const expenseMonth = String(expenseDate.getFullYear()) + '-' + String(expenseDate.getMonth() + 1).padStart(2, '0');
-        const currentMonth = String(new Date().getFullYear()) + '-' + String(new Date().getMonth() + 1).padStart(2, '0');
-        
-        if (expenseMonth === currentMonth) {
-          const updatedBudgets = budgets.map(budget => {
-            if (budget.category === expense.category) {
-              return { ...budget, spent: Math.max(0, (budget.spent || 0) - parseFloat(expense.amount)) };
-            }
-            return budget;
-          });
-          setBudgets(updatedBudgets);
-          await saveData('budgets', updatedBudgets);
-        }
-      };
-      
-      const addSalary = async () => {
-        if (!salaryForm.amount || !salaryForm.date) return;
-        const newSalary = { ...salaryForm, id: Date.now() };
-        const updated = [...salaries, newSalary].sort((a, b) => new Date(b.date) - new Date(a.date));
-        setSalaries(updated);
-        await saveData('salaries', updated);
-        setSalaryForm({ amount: 0, date: '', period: '', source: 'Regular', notes: '' });
-      };
-      
-      const deleteSalary = async (id) => {
-        const updated = salaries.filter(s => s.id !== id);
-        setSalaries(updated);
-        await saveData('salaries', updated);
-      };
-      
-      const transferEarningsToSalary = async (workName, totalEarnings, entries) => {
-        if (entries.length === 0) return;
-        
-        const dates = entries.map(e => new Date(e.date)).sort((a, b) => a - b);
-        const startDate = dates[0].toLocaleDateString();
-        const endDate = dates[dates.length - 1].toLocaleDateString();
-        
-        const newSalary = {
-          id: Date.now(),
-          amount: totalEarnings,
-          date: entries[entries.length - 1].date,
-          period: startDate + ' - ' + endDate,
-          source: workName,
-          notes: entries.length + ' work days transferred'
-        };
-        
-        const updated = [...salaries, newSalary].sort((a, b) => new Date(b.date) - new Date(a.date));
-        setSalaries(updated);
-        await saveData('salaries', updated);
-        alert('Earnings transferred to Salary tab!');
-      };
-      
-      const addSavingsGoal = async () => {
-        if (!goalForm.name || !goalForm.targetAmount) return;
-        const newGoal = { ...goalForm, id: Date.now(), currentAmount: 0 };
-        const updated = [...savingsGoals, newGoal];
-        setSavingsGoals(updated);
-        await saveData('savingsGoals', updated);
-        setGoalForm({ name: '', targetAmount: 0, currentAmount: 0, deadline: '' });
-      };
-      
-      const updateGoalProgress = async (id, amount) => {
-        const updated = savingsGoals.map(goal =>
-          goal.id === id ? { ...goal, currentAmount: parseFloat(amount) || 0 } : goal
-        );
-        setSavingsGoals(updated);
-        await saveData('savingsGoals', updated);
-      };
-      
-      const deleteGoal = async (id) => {
-        const updated = savingsGoals.filter(g => g.id !== id);
-        setSavingsGoals(updated);
-        await saveData('savingsGoals', updated);
-      };
-      
-      const generateCutoffInvoice = () => {
-        const parts = cutoffMonth.split('-');
-        const year = parseInt(parts[0]);
-        const month = parseInt(parts[1]);
-        
-        let startDay, endDay;
-        if (cutoffPeriod === '1') {
-          startDay = 1;
-          endDay = 15;
-        } else {
-          startDay = 16;
-          const daysInMonth = new Date(year, month, 0).getDate();
-          endDay = daysInMonth;
-        }
-        
-        const startDate = new Date(year, month - 1, startDay);
-        const endDate = new Date(year, month - 1, endDay);
-        
-        const filterEntries = (entries) => {
-          return entries.filter(entry => {
-            const entryDate = new Date(entry.date);
-            return entryDate >= startDate && entryDate <= endDate;
-          });
-        };
-        
-        const filtered1 = filterEntries(work1Entries);
-        const filtered2 = filterEntries(work2Entries);
-        
-        setInvoiceData({
-          work1: filtered1,
-          work2: filtered2,
-          period: cutoffPeriod,
-          month: month,
-          year: year,
-          startDay: startDay,
-          endDay: endDay
-        });
-      };
-      
-      const downloadInvoicePDF = () => {
-        window.print();
-      };
-      
-      const copyInvoiceText = () => {
-        if (!invoiceData) return;
-        
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
-                           'July', 'August', 'September', 'October', 'November', 'December'];
-        const monthName = monthNames[invoiceData.month - 1];
-        
-        let text = '=== WORK INVOICE ===\\n';
-        text += 'Cutoff: ' + (invoiceData.period === '1' ? '1st' : '2nd') + ' Half of ' + monthName + ' ' + invoiceData.year + '\\n';
-        text += 'Period: ' + invoiceData.startDay + '-' + invoiceData.endDay + ' ' + monthName + ' ' + invoiceData.year + '\\n';
-        text += 'Generated: ' + new Date().toLocaleDateString() + '\\n\\n';
-        
-        text += '--- WORK 1 ---\\n';
-        invoiceData.work1.forEach(entry => {
-          text += entry.date + ' | ' + entry.timeIn + '-' + entry.timeOut + ' | ';
-          text += 'Reg: ' + entry.regularHours + 'h ₱' + entry.regularPay.toFixed(2) + ' | ';
-          text += 'OT: ' + entry.otHours + 'h ₱' + entry.otPay.toFixed(2) + ' | ';
-          text += 'Total: ₱' + entry.totalPay.toFixed(2) + '\\n';
-        });
-        const work1Total = invoiceData.work1.reduce((sum, e) => sum + e.totalPay, 0);
-        text += 'Work 1 Subtotal: ₱' + work1Total.toFixed(2) + '\\n\\n';
-        
-        text += '--- WORK 2 ---\\n';
-        invoiceData.work2.forEach(entry => {
-          text += entry.date + ' | ' + entry.timeIn + '-' + entry.timeOut + ' | ';
-          text += 'Reg: ' + entry.regularHours + 'h ₱' + entry.regularPay.toFixed(2) + ' | ';
-          text += 'OT: ' + entry.otHours + 'h ₱' + entry.otPay.toFixed(2) + ' | ';
-          text += 'Total: ₱' + entry.totalPay.toFixed(2) + '\\n';
-        });
-        const work2Total = invoiceData.work2.reduce((sum, e) => sum + e.totalPay, 0);
-        text += 'Work 2 Subtotal: ₱' + work2Total.toFixed(2) + '\\n\\n';
-        
-        text += '=== GRAND TOTAL: ₱' + (work1Total + work2Total).toFixed(2) + ' ===';
-        
-        navigator.clipboard.writeText(text);
-        alert('Invoice copied to clipboard!');
-      };
-      
-      if (loading) {
-        return <div>Loading...</div>;
-      }
-      
-      const tabs = [
-        { id: 'dashboard', label: '📊 Dashboard', icon: '📊' },
-        { id: 'timesheet', label: '⏰ Work Log', icon: '⏰' },
-        { id: 'invoice', label: '📄 Cutoff Invoice', icon: '📄' },
-        { id: 'budgets', label: '💸 Budgets', icon: '💸' },
-        { id: 'reports', label: '📈 Reports', icon: '📈' },
-        { id: 'salaries', label: '💰 Sahod', icon: '💰' }
-      ];
-      
-      return (
-        <div className="min-h-screen text-white p-4 md:p-8">
-          <div className="max-w-7xl mx-auto">
-            {/* Header */}
-            <div className="text-center mb-8">
-              <h1 className="text-5xl font-bold mb-2" style={{
-                background: 'linear-gradient(90deg, #10b981, #06b6d4)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent'
-              }}>
-                Finance Tracker
-              </h1>
-              <p className="text-slate-400">Your Complete Work & Budget Manager</p>
+      <div id="invoice-content" class="hidden">
+        <div class="card">
+          <div style="text-align: center; margin-bottom: 30px;">
+            <h1 style="font-size: 36px; margin-bottom: 10px;">WORK INVOICE</h1>
+            <p id="invoice-header"></p>
+          </div>
+          
+          <div id="invoice-body"></div>
+          
+          <div style="border-top: 2px solid #10b981; padding-top: 20px; margin-top: 20px;">
+            <div style="text-align: right;">
+              <p style="font-size: 24px; font-weight: bold; color: #10b981;" id="invoice-total"></p>
             </div>
-            
-            {/* Tabs */}
-            <div className="flex overflow-x-auto gap-2 mb-6 pb-2">
-              {tabs.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={'px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap ' +
-                    (activeTab === tab.id
-                      ? 'bg-emerald-500 text-white shadow-lg'
-                      : 'glass-card text-slate-300 hover:bg-slate-700')}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-            
-            {/* Dashboard Tab */}
-            {activeTab === 'dashboard' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="glass-card rounded-2xl p-6">
-                    <div className="text-3xl mb-2">📅</div>
-                    <div className="text-2xl font-bold text-emerald-400">
-                      {work1Entries.length + work2Entries.length}
-                    </div>
-                    <div className="text-slate-400 text-sm">Work Days</div>
-                  </div>
-                  
-                  <div className="glass-card rounded-2xl p-6">
-                    <div className="text-3xl mb-2">⏰</div>
-                    <div className="text-2xl font-bold text-cyan-400">
-                      {(work1Entries.reduce((sum, e) => sum + e.regularHours, 0) +
-                        work2Entries.reduce((sum, e) => sum + e.regularHours, 0)).toFixed(1)}h
-                    </div>
-                    <div className="text-slate-400 text-sm">Regular Hours</div>
-                  </div>
-                  
-                  <div className="glass-card rounded-2xl p-6">
-                    <div className="text-3xl mb-2">💰</div>
-                    <div className="text-2xl font-bold text-emerald-400">
-                      ₱{(work1Entries.reduce((sum, e) => sum + e.totalPay, 0) +
-                         work2Entries.reduce((sum, e) => sum + e.totalPay, 0) +
-                         salaries.reduce((sum, s) => sum + parseFloat(s.amount), 0)).toFixed(2)}
-                    </div>
-                    <div className="text-slate-400 text-sm">Total Earnings</div>
-                  </div>
-                  
-                  <div className="glass-card rounded-2xl p-6">
-                    <div className="text-3xl mb-2">💸</div>
-                    <div className="text-2xl font-bold text-red-400">
-                      ₱{expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0).toFixed(2)}
-                    </div>
-                    <div className="text-slate-400 text-sm">Total Expenses</div>
-                  </div>
-                </div>
-                
-                <div className="glass-card rounded-2xl p-6">
-                  <h2 className="text-2xl font-bold text-emerald-400 mb-4">Welcome to Your Finance Tracker! 🎉</h2>
-                  <p className="text-slate-300 leading-relaxed">
-                    This is your complete financial management system. Track your work hours, generate invoices, 
-                    manage budgets, and monitor your savings goals all in one place. Navigate through the tabs above 
-                    to access different features.
-                  </p>
-                </div>
-              </div>
-            )}
-            
-            {/* Work Log Tab - Continuing in next part... */}
-            {activeTab === 'timesheet' && (
-              <div className="space-y-8">
-                {/* Work 1 Section */}
-                <div className="glass-card rounded-2xl p-6">
-                  <h2 className="text-2xl font-bold text-emerald-400 mb-4">Work 1 Timesheet</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-                    <input
-                      type="date"
-                      value={work1Form.date}
-                      onChange={(e) => setWork1Form({...work1Form, date: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                    />
-                    <input
-                      type="time"
-                      value={work1Form.timeIn}
-                      onChange={(e) => setWork1Form({...work1Form, timeIn: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="Time In"
-                    />
-                    <input
-                      type="time"
-                      value={work1Form.timeOut}
-                      onChange={(e) => setWork1Form({...work1Form, timeOut: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="Time Out"
-                    />
-                    <input
-                      type="number"
-                      value={work1Form.otHours}
-                      onChange={(e) => setWork1Form({...work1Form, otHours: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="OT Hours"
-                      step="0.5"
-                    />
-                    <button
-                      onClick={addWork1Entry}
-                      className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
-                    >
-                      + Add Entry
-                    </button>
-                  </div>
-                  
-                  {work1Form.timeIn && work1Form.timeOut && (
-                    <div className="mb-4 p-4 bg-slate-700/50 rounded-lg text-sm">
-                      <strong>Preview:</strong> Regular: {calculateHours(work1Form.timeIn, work1Form.timeOut)}h 
-                      = ₱{(parseFloat(calculateHours(work1Form.timeIn, work1Form.timeOut)) * work1Config.hourlyRate).toFixed(2)} | 
-                      OT: {work1Form.otHours}h = ₱{(parseFloat(work1Form.otHours) * work1Config.hourlyRate * 1.5).toFixed(2)} | 
-                      Total: ₱{((parseFloat(calculateHours(work1Form.timeIn, work1Form.timeOut)) * work1Config.hourlyRate) + 
-                        (parseFloat(work1Form.otHours) * work1Config.hourlyRate * 1.5)).toFixed(2)}
-                    </div>
-                  )}
-                  
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-slate-600">
-                          <th className="text-left py-2">Date</th>
-                          <th className="text-left py-2">Time In</th>
-                          <th className="text-left py-2">Time Out</th>
-                          <th className="text-right py-2">Reg Hrs</th>
-                          <th className="text-right py-2">OT Hrs</th>
-                          <th className="text-right py-2">Total Hrs</th>
-                          <th className="text-right py-2">Reg Pay</th>
-                          <th className="text-right py-2">OT Pay</th>
-                          <th className="text-right py-2">Total Pay</th>
-                          <th className="text-center py-2">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {work1Entries.map(entry => (
-                          <tr key={entry.id} className="border-b border-slate-700 hover:bg-slate-700/30">
-                            <td className="py-2">{entry.date}</td>
-                            <td className="py-2">{entry.timeIn}</td>
-                            <td className="py-2">{entry.timeOut}</td>
-                            <td className="text-right py-2">{entry.regularHours}</td>
-                            <td className="text-right py-2">{entry.otHours}</td>
-                            <td className="text-right py-2">{entry.totalHours}</td>
-                            <td className="text-right py-2">₱{entry.regularPay.toFixed(2)}</td>
-                            <td className="text-right py-2">₱{entry.otPay.toFixed(2)}</td>
-                            <td className="text-right py-2 font-bold text-emerald-400">₱{entry.totalPay.toFixed(2)}</td>
-                            <td className="text-center py-2">
-                              <button
-                                onClick={() => deleteWork1Entry(entry.id)}
-                                className="text-red-400 hover:text-red-300"
-                              >
-                                🗑️
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                        {work1Entries.length > 0 && (
-                          <tr className="font-bold bg-emerald-500/10">
-                            <td colSpan="6" className="text-right py-3">TOTAL:</td>
-                            <td className="text-right py-3">₱{work1Entries.reduce((sum, e) => sum + e.regularPay, 0).toFixed(2)}</td>
-                            <td className="text-right py-3">₱{work1Entries.reduce((sum, e) => sum + e.otPay, 0).toFixed(2)}</td>
-                            <td className="text-right py-3 text-emerald-400">₱{work1Entries.reduce((sum, e) => sum + e.totalPay, 0).toFixed(2)}</td>
-                            <td></td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                  
-                  {work1Entries.length > 0 && (
-                    <button
-                      onClick={() => transferEarningsToSalary('Work 1', 
-                        work1Entries.reduce((sum, e) => sum + e.totalPay, 0), work1Entries)}
-                      className="mt-4 px-6 py-2 bg-cyan-500 hover:bg-cyan-600 rounded-lg font-semibold transition"
-                    >
-                      Transfer to Salary →
-                    </button>
-                  )}
-                </div>
-                
-                {/* Work 2 Section - Similar structure */}
-                <div className="glass-card rounded-2xl p-6">
-                  <h2 className="text-2xl font-bold text-cyan-400 mb-4">Work 2 Timesheet</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-                    <input
-                      type="date"
-                      value={work2Form.date}
-                      onChange={(e) => setWork2Form({...work2Form, date: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                    />
-                    <input
-                      type="time"
-                      value={work2Form.timeIn}
-                      onChange={(e) => setWork2Form({...work2Form, timeIn: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                    />
-                    <input
-                      type="time"
-                      value={work2Form.timeOut}
-                      onChange={(e) => setWork2Form({...work2Form, timeOut: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                    />
-                    <input
-                      type="number"
-                      value={work2Form.otHours}
-                      onChange={(e) => setWork2Form({...work2Form, otHours: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="OT Hours"
-                      step="0.5"
-                    />
-                    <button
-                      onClick={addWork2Entry}
-                      className="px-6 py-2 bg-cyan-500 hover:bg-cyan-600 rounded-lg font-semibold transition"
-                    >
-                      + Add Entry
-                    </button>
-                  </div>
-                  
-                  {work2Form.timeIn && work2Form.timeOut && (
-                    <div className="mb-4 p-4 bg-slate-700/50 rounded-lg text-sm">
-                      <strong>Preview:</strong> Regular: {calculateHours(work2Form.timeIn, work2Form.timeOut)}h 
-                      = ₱{(parseFloat(calculateHours(work2Form.timeIn, work2Form.timeOut)) * work2Config.hourlyRate).toFixed(2)} | 
-                      OT: {work2Form.otHours}h = ₱{(parseFloat(work2Form.otHours) * work2Config.hourlyRate * 1.5).toFixed(2)} | 
-                      Total: ₱{((parseFloat(calculateHours(work2Form.timeIn, work2Form.timeOut)) * work2Config.hourlyRate) + 
-                        (parseFloat(work2Form.otHours) * work2Config.hourlyRate * 1.5)).toFixed(2)}
-                    </div>
-                  )}
-                  
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-slate-600">
-                          <th className="text-left py-2">Date</th>
-                          <th className="text-left py-2">Time In</th>
-                          <th className="text-left py-2">Time Out</th>
-                          <th className="text-right py-2">Reg Hrs</th>
-                          <th className="text-right py-2">OT Hrs</th>
-                          <th className="text-right py-2">Total Hrs</th>
-                          <th className="text-right py-2">Reg Pay</th>
-                          <th className="text-right py-2">OT Pay</th>
-                          <th className="text-right py-2">Total Pay</th>
-                          <th className="text-center py-2">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {work2Entries.map(entry => (
-                          <tr key={entry.id} className="border-b border-slate-700 hover:bg-slate-700/30">
-                            <td className="py-2">{entry.date}</td>
-                            <td className="py-2">{entry.timeIn}</td>
-                            <td className="py-2">{entry.timeOut}</td>
-                            <td className="text-right py-2">{entry.regularHours}</td>
-                            <td className="text-right py-2">{entry.otHours}</td>
-                            <td className="text-right py-2">{entry.totalHours}</td>
-                            <td className="text-right py-2">₱{entry.regularPay.toFixed(2)}</td>
-                            <td className="text-right py-2">₱{entry.otPay.toFixed(2)}</td>
-                            <td className="text-right py-2 font-bold text-cyan-400">₱{entry.totalPay.toFixed(2)}</td>
-                            <td className="text-center py-2">
-                              <button
-                                onClick={() => deleteWork2Entry(entry.id)}
-                                className="text-red-400 hover:text-red-300"
-                              >
-                                🗑️
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                        {work2Entries.length > 0 && (
-                          <tr className="font-bold bg-cyan-500/10">
-                            <td colSpan="6" className="text-right py-3">TOTAL:</td>
-                            <td className="text-right py-3">₱{work2Entries.reduce((sum, e) => sum + e.regularPay, 0).toFixed(2)}</td>
-                            <td className="text-right py-3">₱{work2Entries.reduce((sum, e) => sum + e.otPay, 0).toFixed(2)}</td>
-                            <td className="text-right py-3 text-cyan-400">₱{work2Entries.reduce((sum, e) => sum + e.totalPay, 0).toFixed(2)}</td>
-                            <td></td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                  
-                  {work2Entries.length > 0 && (
-                    <button
-                      onClick={() => transferEarningsToSalary('Work 2', 
-                        work2Entries.reduce((sum, e) => sum + e.totalPay, 0), work2Entries)}
-                      className="mt-4 px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
-                    >
-                      Transfer to Salary →
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-            
-            {/* Invoice Tab */}
-            {activeTab === 'invoice' && (
-              <div className="space-y-6">
-                <div className="glass-card rounded-2xl p-6">
-                  <h2 className="text-2xl font-bold text-emerald-400 mb-4">Generate Cutoff Invoice</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div>
-                      <label className="block text-sm mb-2">Month</label>
-                      <input
-                        type="month"
-                        value={cutoffMonth}
-                        onChange={(e) => setCutoffMonth(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm mb-2">Cutoff Period</label>
-                      <select
-                        value={cutoffPeriod}
-                        onChange={(e) => setCutoffPeriod(e.target.value)}
-                        className="w-full px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      >
-                        <option value="1">1st Half (1-15)</option>
-                        <option value="2">2nd Half (16-End)</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm mb-2">&nbsp;</label>
-                      <button
-                        onClick={generateCutoffInvoice}
-                        className="w-full px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
-                      >
-                        Generate Invoice
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                {invoiceData && (
-                  <div>
-                    <div className="glass-card rounded-2xl p-8 no-print" id="invoice-content">
-                      <div className="text-center mb-6">
-                        <h1 className="text-3xl font-bold mb-2">WORK INVOICE</h1>
-                        <p className="text-slate-400">
-                          {invoiceData.period === '1' ? '1st' : '2nd'} Half of{' '}
-                          {['January', 'February', 'March', 'April', 'May', 'June', 
-                            'July', 'August', 'September', 'October', 'November', 'December'][invoiceData.month - 1]}{' '}
-                          {invoiceData.year}
-                        </p>
-                        <p className="text-sm text-slate-500">
-                          Period: {invoiceData.startDay}-{invoiceData.endDay}{' '}
-                          {['January', 'February', 'March', 'April', 'May', 'June', 
-                            'July', 'August', 'September', 'October', 'November', 'December'][invoiceData.month - 1]}{' '}
-                          {invoiceData.year}
-                        </p>
-                        <p className="text-xs text-slate-600">Generated: {new Date().toLocaleDateString()}</p>
-                      </div>
-                      
-                      <div className="mb-8">
-                        <h3 className="text-xl font-bold text-emerald-400 mb-4">Work 1</h3>
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="border-b border-slate-600">
-                              <th className="text-left py-2">Date</th>
-                              <th className="text-left py-2">Hours</th>
-                              <th className="text-left py-2">Time</th>
-                              <th className="text-right py-2">Regular Pay</th>
-                              <th className="text-right py-2">OT Pay</th>
-                              <th className="text-right py-2">Total</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {invoiceData.work1.map(entry => (
-                              <tr key={entry.id} className="border-b border-slate-700">
-                                <td className="py-2">{entry.date}</td>
-                                <td className="py-2">{entry.regularHours}h + {entry.otHours}h OT</td>
-                                <td className="py-2">{entry.timeIn}-{entry.timeOut}</td>
-                                <td className="text-right py-2">₱{entry.regularPay.toFixed(2)}</td>
-                                <td className="text-right py-2">₱{entry.otPay.toFixed(2)}</td>
-                                <td className="text-right py-2 font-bold">₱{entry.totalPay.toFixed(2)}</td>
-                              </tr>
-                            ))}
-                            <tr className="font-bold bg-emerald-500/10">
-                              <td colSpan="5" className="text-right py-3">Work 1 Subtotal:</td>
-                              <td className="text-right py-3 text-emerald-400">
-                                ₱{invoiceData.work1.reduce((sum, e) => sum + e.totalPay, 0).toFixed(2)}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      
-                      <div className="mb-8">
-                        <h3 className="text-xl font-bold text-cyan-400 mb-4">Work 2</h3>
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="border-b border-slate-600">
-                              <th className="text-left py-2">Date</th>
-                              <th className="text-left py-2">Hours</th>
-                              <th className="text-left py-2">Time</th>
-                              <th className="text-right py-2">Regular Pay</th>
-                              <th className="text-right py-2">OT Pay</th>
-                              <th className="text-right py-2">Total</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {invoiceData.work2.map(entry => (
-                              <tr key={entry.id} className="border-b border-slate-700">
-                                <td className="py-2">{entry.date}</td>
-                                <td className="py-2">{entry.regularHours}h + {entry.otHours}h OT</td>
-                                <td className="py-2">{entry.timeIn}-{entry.timeOut}</td>
-                                <td className="text-right py-2">₱{entry.regularPay.toFixed(2)}</td>
-                                <td className="text-right py-2">₱{entry.otPay.toFixed(2)}</td>
-                                <td className="text-right py-2 font-bold">₱{entry.totalPay.toFixed(2)}</td>
-                              </tr>
-                            ))}
-                            <tr className="font-bold bg-cyan-500/10">
-                              <td colSpan="5" className="text-right py-3">Work 2 Subtotal:</td>
-                              <td className="text-right py-3 text-cyan-400">
-                                ₱{invoiceData.work2.reduce((sum, e) => sum + e.totalPay, 0).toFixed(2)}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      
-                      <div className="border-t-2 border-emerald-500 pt-4">
-                        <div className="text-right">
-                          <p className="text-2xl font-bold text-emerald-400">
-                            GRAND TOTAL: ₱{(invoiceData.work1.reduce((sum, e) => sum + e.totalPay, 0) + 
-                              invoiceData.work2.reduce((sum, e) => sum + e.totalPay, 0)).toFixed(2)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-4 mt-4 no-print">
-                      <button
-                        onClick={copyInvoiceText}
-                        className="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 rounded-lg font-semibold transition"
-                      >
-                        📋 Copy Invoice Text
-                      </button>
-                      <button
-                        onClick={downloadInvoicePDF}
-                        className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
-                      >
-                        📥 Download as PDF
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-            
-            {/* Budgets Tab */}
-            {activeTab === 'budgets' && (
-              <div className="space-y-6">
-                <div className="glass-card rounded-2xl p-6">
-                  <h2 className="text-2xl font-bold text-emerald-400 mb-4">Add Budget Category</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <input
-                      type="text"
-                      value={budgetForm.category}
-                      onChange={(e) => setBudgetForm({...budgetForm, category: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="Category (e.g., Food)"
-                    />
-                    <input
-                      type="number"
-                      value={budgetForm.monthlyLimit}
-                      onChange={(e) => setBudgetForm({...budgetForm, monthlyLimit: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="Monthly Limit"
-                    />
-                    <button
-                      onClick={addBudget}
-                      className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
-                    >
-                      + Add Budget
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="glass-card rounded-2xl p-6">
-                  <h2 className="text-2xl font-bold text-red-400 mb-4">Add Expense</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                    <input
-                      type="number"
-                      value={expenseForm.amount}
-                      onChange={(e) => setExpenseForm({...expenseForm, amount: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="Amount"
-                    />
-                    <select
-                      value={expenseForm.category}
-                      onChange={(e) => setExpenseForm({...expenseForm, category: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                    >
-                      <option value="">Select Category</option>
-                      {budgets.map(b => (
-                        <option key={b.id} value={b.category}>{b.category}</option>
-                      ))}
-                    </select>
-                    <input
-                      type="date"
-                      value={expenseForm.date}
-                      onChange={(e) => setExpenseForm({...expenseForm, date: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                    />
-                    <input
-                      type="text"
-                      value={expenseForm.description}
-                      onChange={(e) => setExpenseForm({...expenseForm, description: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="Description"
-                    />
-                    <button
-                      onClick={addExpense}
-                      className="px-6 py-2 bg-red-500 hover:bg-red-600 rounded-lg font-semibold transition"
-                    >
-                      + Add Expense
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {budgets.map(budget => {
-                    const percentage = (budget.spent / budget.monthlyLimit) * 100;
-                    const isWarning = percentage >= 80 && percentage < 100;
-                    const isOver = percentage >= 100;
-                    
-                    return (
-                      <div key={budget.id} className="glass-card rounded-2xl p-6">
-                        <div className="flex justify-between items-start mb-3">
-                          <h3 className="text-xl font-bold">{budget.category}</h3>
-                          {isWarning && <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">⚠️ 80% Used</span>}
-                          {isOver && <span className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded animate-pulse">OVER BUDGET!</span>}
-                        </div>
-                        <div className="text-sm text-slate-400 mb-2">
-                          ₱{(budget.spent || 0).toFixed(2)} / ₱{budget.monthlyLimit}
-                        </div>
-                        <div className="w-full bg-slate-700 rounded-full h-3 mb-2">
-                          <div
-                            className={'h-3 rounded-full transition-all ' + 
-                              (isOver ? 'bg-red-500' : isWarning ? 'bg-yellow-500' : 'bg-emerald-500')}
-                            style={{width: Math.min(percentage, 100) + '%'}}
-                          ></div>
-                        </div>
-                        <div className="text-xs text-slate-500">{percentage.toFixed(1)}% used</div>
-                      </div>
-                    );
-                  })}
-                </div>
-                
-                <div className="glass-card rounded-2xl p-6">
-                  <h2 className="text-2xl font-bold text-slate-300 mb-4">Recent Expenses</h2>
-                  <div className="space-y-2">
-                    {expenses.slice(0, 10).map(expense => (
-                      <div key={expense.id} className="flex justify-between items-center p-3 bg-slate-700/30 rounded-lg">
-                        <div>
-                          <div className="font-semibold">{expense.description}</div>
-                          <div className="text-sm text-slate-400">{expense.category} • {expense.date}</div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="text-red-400 font-bold">-₱{parseFloat(expense.amount).toFixed(2)}</div>
-                          <button
-                            onClick={() => deleteExpense(expense.id)}
-                            className="text-red-400 hover:text-red-300"
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {/* Salary Tab */}
-            {activeTab === 'salaries' && (
-              <div className="space-y-6">
-                <div className="glass-card rounded-2xl p-6">
-                  <h2 className="text-2xl font-bold text-emerald-400 mb-4">Add Salary/Income</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                    <input
-                      type="number"
-                      value={salaryForm.amount}
-                      onChange={(e) => setSalaryForm({...salaryForm, amount: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="Amount"
-                    />
-                    <input
-                      type="date"
-                      value={salaryForm.date}
-                      onChange={(e) => setSalaryForm({...salaryForm, date: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                    />
-                    <input
-                      type="text"
-                      value={salaryForm.period}
-                      onChange={(e) => setSalaryForm({...salaryForm, period: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="Period (optional)"
-                    />
-                    <select
-                      value={salaryForm.source}
-                      onChange={(e) => setSalaryForm({...salaryForm, source: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                    >
-                      <option value="Regular">Regular</option>
-                      <option value="Bonus">Bonus</option>
-                      <option value="OT">OT</option>
-                      <option value="Commission">Commission</option>
-                      <option value="Other">Other</option>
-                    </select>
-                    <input
-                      type="text"
-                      value={salaryForm.notes}
-                      onChange={(e) => setSalaryForm({...salaryForm, notes: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="Notes"
-                    />
-                    <button
-                      onClick={addSalary}
-                      className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
-                    >
-                      + Add
-                    </button>
-                  </div>
-                </div>
-                
-                <div className="glass-card rounded-2xl p-6">
-                  <h2 className="text-2xl font-bold text-slate-300 mb-4">Salary Records</h2>
-                  <div className="space-y-3">
-                    {salaries.map(salary => (
-                      <div key={salary.id} className="flex justify-between items-center p-4 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
-                        <div>
-                          <div className="font-bold text-lg">₱{parseFloat(salary.amount).toFixed(2)}</div>
-                          <div className="text-sm text-slate-400">
-                            {salary.date} • {salary.source}
-                            {salary.period && <span> • {salary.period}</span>}
-                          </div>
-                          {salary.notes && <div className="text-xs text-slate-500 mt-1">{salary.notes}</div>}
-                        </div>
-                        <button
-                          onClick={() => deleteSalary(salary.id)}
-                          className="text-red-400 hover:text-red-300"
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {/* Reports Tab */}
-            {activeTab === 'reports' && (
-              <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="glass-card rounded-2xl p-6">
-                    <h3 className="text-lg font-semibold mb-2">Total Earnings</h3>
-                    <div className="text-3xl font-bold text-emerald-400">
-                      ₱{(work1Entries.reduce((sum, e) => sum + e.totalPay, 0) +
-                         work2Entries.reduce((sum, e) => sum + e.totalPay, 0) +
-                         salaries.reduce((sum, s) => sum + parseFloat(s.amount), 0)).toFixed(2)}
-                    </div>
-                    <div className="text-sm text-slate-400 mt-1">This month</div>
-                  </div>
-                  
-                  <div className="glass-card rounded-2xl p-6">
-                    <h3 className="text-lg font-semibold mb-2">Total Expenses</h3>
-                    <div className="text-3xl font-bold text-red-400">
-                      ₱{expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0).toFixed(2)}
-                    </div>
-                    <div className="text-sm text-slate-400 mt-1">This month</div>
-                  </div>
-                  
-                  <div className="glass-card rounded-2xl p-6">
-                    <h3 className="text-lg font-semibold mb-2">Net Savings</h3>
-                    <div className="text-3xl font-bold text-cyan-400">
-                      ₱{((work1Entries.reduce((sum, e) => sum + e.totalPay, 0) +
-                         work2Entries.reduce((sum, e) => sum + e.totalPay, 0) +
-                         salaries.reduce((sum, s) => sum + parseFloat(s.amount), 0)) -
-                         expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0)).toFixed(2)}
-                    </div>
-                    <div className="text-sm text-slate-400 mt-1">Earnings - Expenses</div>
-                  </div>
-                </div>
-                
-                <div className="glass-card rounded-2xl p-6">
-                  <h2 className="text-2xl font-bold text-emerald-400 mb-4">Savings Goals</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                    <input
-                      type="text"
-                      value={goalForm.name}
-                      onChange={(e) => setGoalForm({...goalForm, name: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="Goal Name"
-                    />
-                    <input
-                      type="number"
-                      value={goalForm.targetAmount}
-                      onChange={(e) => setGoalForm({...goalForm, targetAmount: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                      placeholder="Target Amount"
-                    />
-                    <input
-                      type="date"
-                      value={goalForm.deadline}
-                      onChange={(e) => setGoalForm({...goalForm, deadline: e.target.value})}
-                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
-                    />
-                    <button
-                      onClick={addSavingsGoal}
-                      className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
-                    >
-                      + Add Goal
-                    </button>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    {savingsGoals.map(goal => {
-                      const percentage = (goal.currentAmount / goal.targetAmount) * 100;
-                      const isComplete = percentage >= 100;
-                      
-                      return (
-                        <div key={goal.id} className="p-4 bg-slate-700/30 rounded-lg">
-                          <div className="flex justify-between items-start mb-2">
-                            <div>
-                              <h3 className="font-bold text-lg">{goal.name}</h3>
-                              {goal.deadline && (
-                                <div className="text-sm text-slate-400">Deadline: {goal.deadline}</div>
-                              )}
-                            </div>
-                            <button
-                              onClick={() => deleteGoal(goal.id)}
-                              className="text-red-400 hover:text-red-300"
-                            >
-                              🗑️
-                            </button>
-                          </div>
-                          
-                          <div className="flex gap-2 items-center mb-2">
-                            <input
-                              type="number"
-                              value={goal.currentAmount}
-                              onChange={(e) => updateGoalProgress(goal.id, e.target.value)}
-                              className="flex-1 px-3 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white text-sm"
-                              placeholder="Current amount"
-                            />
-                            <span className="text-slate-400">/ ₱{goal.targetAmount}</span>
-                          </div>
-                          
-                          <div className="w-full bg-slate-700 rounded-full h-4 mb-2">
-                            <div
-                              className={'h-4 rounded-full transition-all ' + 
-                                (isComplete ? 'bg-emerald-500' : 'bg-cyan-500')}
-                              style={{width: Math.min(percentage, 100) + '%'}}
-                            ></div>
-                          </div>
-                          
-                          <div className="flex justify-between text-sm">
-                            <span className={isComplete ? 'text-emerald-400 font-bold' : 'text-slate-400'}>
-                              {percentage.toFixed(1)}% {isComplete && '🎉 Goal Achieved!'}
-                            </span>
-                            <span className="text-slate-500">
-                              ₱{(goal.targetAmount - goal.currentAmount).toFixed(2)} remaining
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
-      );
-    };
+        
+        <div style="display: flex; gap: 10px; margin-top: 15px;" class="no-print">
+          <button onclick="window.print()">📥 Print/PDF</button>
+          <button class="btn-secondary" onclick="copyInvoice()">📋 Copy Text</button>
+        </div>
+      </div>
+    </div>
     
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<FinanceTracker />);
+    <!-- Budgets Tab -->
+    <div id="tab-budgets" class="tab-content hidden">
+      <div class="card">
+        <h2>Add Budget</h2>
+        <div class="form-grid">
+          <input type="text" id="budget-cat" placeholder="Category (e.g., Food)">
+          <input type="number" id="budget-limit" placeholder="Monthly Limit">
+          <button onclick="addBudget()">+ Add Budget</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2 style="color: #ef4444;">Add Expense</h2>
+        <div class="form-grid">
+          <input type="number" id="expense-amount" placeholder="Amount">
+          <select id="expense-cat">
+            <option value="">Select Category</option>
+          </select>
+          <input type="date" id="expense-date">
+          <input type="text" id="expense-desc" placeholder="Description">
+          <button onclick="addExpense()">+ Add Expense</button>
+        </div>
+      </div>
+      
+      <div id="budget-list"></div>
+      
+      <div class="card">
+        <h2>Recent Expenses</h2>
+        <div id="expense-list"></div>
+      </div>
+    </div>
+    
+    <!-- Salary Tab -->
+    <div id="tab-salary" class="tab-content hidden">
+      <div class="card">
+        <h2>Add Salary/Income</h2>
+        <div class="form-grid">
+          <input type="number" id="salary-amount" placeholder="Amount">
+          <input type="date" id="salary-date">
+          <input type="text" id="salary-period" placeholder="Period (optional)">
+          <select id="salary-source">
+            <option value="Regular">Regular</option>
+            <option value="Bonus">Bonus</option>
+            <option value="OT">OT</option>
+            <option value="Other">Other</option>
+          </select>
+          <button onclick="addSalary()">+ Add</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2>Salary Records</h2>
+        <div id="salary-list"></div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Data storage
+    let work1 = [];
+    let work2 = [];
+    let budgets = [];
+    let expenses = [];
+    let salaries = [];
+    
+    // Load data
+    function loadData() {
+      work1 = JSON.parse(localStorage.getItem('work1') || '[]');
+      work2 = JSON.parse(localStorage.getItem('work2') || '[]');
+      budgets = JSON.parse(localStorage.getItem('budgets') || '[]');
+      expenses = JSON.parse(localStorage.getItem('expenses') || '[]');
+      salaries = JSON.parse(localStorage.getItem('salaries') || '[]');
+      render();
+    }
+    
+    // Save data
+    function save(key, data) {
+      localStorage.setItem(key, JSON.stringify(data));
+      render();
+    }
+    
+    // Calculate hours
+    function calcHours(timeIn, timeOut) {
+      if (!timeIn || !timeOut) return 0;
+      const [h1, m1] = timeIn.split(':').map(Number);
+      const [h2, m2] = timeOut.split(':').map(Number);
+      return ((h2 * 60 + m2) - (h1 * 60 + m1)) / 60;
+    }
+    
+    // Add Work 1 Entry
+    function addWork1Entry() {
+      const date = document.getElementById('w1-date').value;
+      const timeIn = document.getElementById('w1-timein').value;
+      const timeOut = document.getElementById('w1-timeout').value;
+      const ot = parseFloat(document.getElementById('w1-ot').value) || 0;
+      
+      if (!date || !timeIn || !timeOut) return alert('Please fill all fields!');
+      
+      const regHrs = calcHours(timeIn, timeOut);
+      const regPay = regHrs * 125;
+      const otPay = ot * 125 * 1.5;
+      const total = regPay + otPay;
+      
+      work1.push({
+        id: Date.now(),
+        date, timeIn, timeOut,
+        regHrs: regHrs.toFixed(2),
+        ot: ot.toFixed(2),
+        regPay: regPay.toFixed(2),
+        otPay: otPay.toFixed(2),
+        total: total.toFixed(2)
+      });
+      
+      save('work1', work1);
+      document.getElementById('w1-date').value = '';
+      document.getElementById('w1-timein').value = '';
+      document.getElementById('w1-timeout').value = '';
+      document.getElementById('w1-ot').value = '0';
+    }
+    
+    // Add Work 2 Entry  
+    function addWork2Entry() {
+      const date = document.getElementById('w2-date').value;
+      const timeIn = document.getElementById('w2-timein').value;
+      const timeOut = document.getElementById('w2-timeout').value;
+      const ot = parseFloat(document.getElementById('w2-ot').value) || 0;
+      
+      if (!date || !timeIn || !timeOut) return alert('Please fill all fields!');
+      
+      const regHrs = calcHours(timeIn, timeOut);
+      const regPay = regHrs * 150;
+      const otPay = ot * 150 * 1.5;
+      const total = regPay + otPay;
+      
+      work2.push({
+        id: Date.now(),
+        date, timeIn, timeOut,
+        regHrs: regHrs.toFixed(2),
+        ot: ot.toFixed(2),
+        regPay: regPay.toFixed(2),
+        otPay: otPay.toFixed(2),
+        total: total.toFixed(2)
+      });
+      
+      save('work2', work2);
+      document.getElementById('w2-date').value = '';
+      document.getElementById('w2-timein').value = '';
+      document.getElementById('w2-timeout').value = '';
+      document.getElementById('w2-ot').value = '0';
+    }
+    
+    // Delete entries
+    function deleteWork(type, id) {
+      if (type === 1) {
+        work1 = work1.filter(e => e.id !== id);
+        save('work1', work1);
+      } else {
+        work2 = work2.filter(e => e.id !== id);
+        save('work2', work2);
+      }
+    }
+    
+    // Transfer to salary
+    function transferToSalary(type) {
+      const data = type === 'work1' ? work1 : work2;
+      if (data.length === 0) return alert('No entries to transfer!');
+      
+      const total = data.reduce((sum, e) => sum + parseFloat(e.total), 0);
+      const dates = data.map(e => e.date).sort();
+      const period = dates[0] + ' - ' + dates[dates.length - 1];
+      
+      salaries.push({
+        id: Date.now(),
+        amount: total.toFixed(2),
+        date: dates[dates.length - 1],
+        period: period,
+        source: type === 'work1' ? 'Work 1' : 'Work 2',
+        notes: data.length + ' days transferred'
+      });
+      
+      save('salaries', salaries);
+      alert('Transferred to Salary!');
+    }
+    
+    // Add Budget
+    function addBudget() {
+      const cat = document.getElementById('budget-cat').value;
+      const limit = parseFloat(document.getElementById('budget-limit').value);
+      
+      if (!cat || !limit) return alert('Fill all fields!');
+      
+      budgets.push({ id: Date.now(), cat, limit, spent: 0 });
+      save('budgets', budgets);
+      document.getElementById('budget-cat').value = '';
+      document.getElementById('budget-limit').value = '';
+    }
+    
+    // Add Expense
+    function addExpense() {
+      const amount = parseFloat(document.getElementById('expense-amount').value);
+      const cat = document.getElementById('expense-cat').value;
+      const date = document.getElementById('expense-date').value;
+      const desc = document.getElementById('expense-desc').value;
+      
+      if (!amount || !cat || !date) return alert('Fill all fields!');
+      
+      expenses.push({ id: Date.now(), amount, cat, date, desc });
+      
+      const budget = budgets.find(b => b.cat === cat);
+      if (budget) {
+        budget.spent = (budget.spent || 0) + amount;
+      }
+      
+      save('expenses', expenses);
+      save('budgets', budgets);
+      document.getElementById('expense-amount').value = '';
+      document.getElementById('expense-date').value = '';
+      document.getElementById('expense-desc').value = '';
+    }
+    
+    // Delete Expense
+    function deleteExpense(id) {
+      const expense = expenses.find(e => e.id === id);
+      if (!expense) return;
+      
+      const budget = budgets.find(b => b.cat === expense.cat);
+      if (budget) {
+        budget.spent = Math.max(0, (budget.spent || 0) - expense.amount);
+      }
+      
+      expenses = expenses.filter(e => e.id !== id);
+      save('expenses', expenses);
+      save('budgets', budgets);
+    }
+    
+    // Add Salary
+    function addSalary() {
+      const amount = parseFloat(document.getElementById('salary-amount').value);
+      const date = document.getElementById('salary-date').value;
+      const period = document.getElementById('salary-period').value;
+      const source = document.getElementById('salary-source').value;
+      
+      if (!amount || !date) return alert('Fill required fields!');
+      
+      salaries.push({ id: Date.now(), amount, date, period, source, notes: '' });
+      salaries.sort((a, b) => new Date(b.date) - new Date(a.date));
+      save('salaries', salaries);
+      document.getElementById('salary-amount').value = '';
+      document.getElementById('salary-date').value = '';
+      document.getElementById('salary-period').value = '';
+    }
+    
+    // Delete Salary
+    function deleteSalary(id) {
+      salaries = salaries.filter(s => s.id !== id);
+      save('salaries', salaries);
+    }
+    
+    // Generate Invoice
+    function generateInvoice() {
+      const month = document.getElementById('cutoff-month').value;
+      const period = document.getElementById('cutoff-period').value;
+      
+      if (!month) return alert('Select month!');
+      
+      const [year, monthNum] = month.split('-').map(Number);
+      const startDay = period === '1' ? 1 : 16;
+      const endDay = period === '1' ? 15 : new Date(year, monthNum, 0).getDate();
+      
+      const startDate = new Date(year, monthNum - 1, startDay);
+      const endDate = new Date(year, monthNum - 1, endDay);
+      
+      const filtered1 = work1.filter(e => {
+        const d = new Date(e.date);
+        return d >= startDate && d <= endDate;
+      });
+      
+      const filtered2 = work2.filter(e => {
+        const d = new Date(e.date);
+        return d >= startDate && d <= endDate;
+      });
+      
+      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const monthName = monthNames[monthNum - 1];
+      
+      document.getElementById('invoice-header').innerHTML = 
+        (period === '1' ? '1st' : '2nd') + ' Half of ' + monthName + ' ' + year + '<br>' +
+        'Period: ' + startDay + '-' + endDay + ' ' + monthName + ' ' + year;
+      
+      let html = '';
+      
+      html += '<h3 style="color: #10b981; margin-bottom: 15px;">Work 1</h3>';
+      html += '<table><thead><tr><th>Date</th><th>Time</th><th class="text-right">Hrs</th><th class="text-right">Pay</th></tr></thead><tbody>';
+      let w1Total = 0;
+      filtered1.forEach(e => {
+        html += '<tr><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
+        html += '<td class="text-right">' + e.regHrs + 'h + ' + e.ot + 'h OT</td>';
+        html += '<td class="text-right">₱' + e.total + '</td></tr>';
+        w1Total += parseFloat(e.total);
+      });
+      html += '<tr class="total-row"><td colspan="3" class="text-right">Work 1 Subtotal:</td>';
+      html += '<td class="text-right">₱' + w1Total.toFixed(2) + '</td></tr>';
+      html += '</tbody></table><br><br>';
+      
+      html += '<h3 style="color: #06b6d4; margin-bottom: 15px;">Work 2</h3>';
+      html += '<table><thead><tr><th>Date</th><th>Time</th><th class="text-right">Hrs</th><th class="text-right">Pay</th></tr></thead><tbody>';
+      let w2Total = 0;
+      filtered2.forEach(e => {
+        html += '<tr><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
+        html += '<td class="text-right">' + e.regHrs + 'h + ' + e.ot + 'h OT</td>';
+        html += '<td class="text-right">₱' + e.total + '</td></tr>';
+        w2Total += parseFloat(e.total);
+      });
+      html += '<tr class="total-row"><td colspan="3" class="text-right">Work 2 Subtotal:</td>';
+      html += '<td class="text-right">₱' + w2Total.toFixed(2) + '</td></tr>';
+      html += '</tbody></table>';
+      
+      document.getElementById('invoice-body').innerHTML = html;
+      document.getElementById('invoice-total').textContent = 'GRAND TOTAL: ₱' + (w1Total + w2Total).toFixed(2);
+      document.getElementById('invoice-content').classList.remove('hidden');
+    }
+    
+    // Copy Invoice
+    function copyInvoice() {
+      alert('Invoice details copied! (Simplified text copy)');
+    }
+    
+    // Render all
+    function render() {
+      // Dashboard stats
+      const totalDays = work1.length + work2.length;
+      const totalHrs = work1.reduce((s, e) => s + parseFloat(e.regHrs), 0) + 
+                       work2.reduce((s, e) => s + parseFloat(e.regHrs), 0);
+      const totalEarn = work1.reduce((s, e) => s + parseFloat(e.total), 0) +
+                        work2.reduce((s, e) => s + parseFloat(e.total), 0) +
+                        salaries.reduce((s, e) => s + parseFloat(e.amount), 0);
+      const totalExp = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
+      
+      document.getElementById('stat-days').textContent = totalDays;
+      document.getElementById('stat-hours').textContent = totalHrs.toFixed(1) + 'h';
+      document.getElementById('stat-earnings').textContent = '₱' + totalEarn.toFixed(2);
+      document.getElementById('stat-expenses').textContent = '₱' + totalExp.toFixed(2);
+      
+      // Work 1 table
+      let w1Html = '';
+      let w1Tot = 0;
+      work1.forEach(e => {
+        w1Html += '<tr><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
+        w1Html += '<td class="text-right">' + e.regHrs + '</td><td class="text-right">' + e.ot + '</td>';
+        w1Html += '<td class="text-right">₱' + e.regPay + '</td><td class="text-right">₱' + e.otPay + '</td>';
+        w1Html += '<td class="text-right">₱' + e.total + '</td>';
+        w1Html += '<td class="text-center"><button class="btn-danger" onclick="deleteWork(1,' + e.id + ')">🗑️</button></td></tr>';
+        w1Tot += parseFloat(e.total);
+      });
+      if (work1.length > 0) {
+        w1Html += '<tr class="total-row"><td colspan="6" class="text-right">TOTAL:</td>';
+        w1Html += '<td class="text-right">₱' + w1Tot.toFixed(2) + '</td><td></td></tr>';
+      }
+      document.getElementById('w1-table').innerHTML = w1Html;
+      
+      // Work 2 table
+      let w2Html = '';
+      let w2Tot = 0;
+      work2.forEach(e => {
+        w2Html += '<tr><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
+        w2Html += '<td class="text-right">' + e.regHrs + '</td><td class="text-right">' + e.ot + '</td>';
+        w2Html += '<td class="text-right">₱' + e.regPay + '</td><td class="text-right">₱' + e.otPay + '</td>';
+        w2Html += '<td class="text-right">₱' + e.total + '</td>';
+        w2Html += '<td class="text-center"><button class="btn-danger" onclick="deleteWork(2,' + e.id + ')">🗑️</button></td></tr>';
+        w2Tot += parseFloat(e.total);
+      });
+      if (work2.length > 0) {
+        w2Html += '<tr class="total-row"><td colspan="6" class="text-right">TOTAL:</td>';
+        w2Html += '<td class="text-right">₱' + w2Tot.toFixed(2) + '</td><td></td></tr>';
+      }
+      document.getElementById('w2-table').innerHTML = w2Html;
+      
+      // Budget category dropdown
+      let catHtml = '<option value="">Select Category</option>';
+      budgets.forEach(b => {
+        catHtml += '<option value="' + b.cat + '">' + b.cat + '</option>';
+      });
+      document.getElementById('expense-cat').innerHTML = catHtml;
+      
+      // Budget list
+      let budgetHtml = '';
+      budgets.forEach(b => {
+        const pct = (b.spent / b.limit) * 100;
+        const color = pct >= 100 ? '#ef4444' : pct >= 80 ? '#eab308' : '#10b981';
+        budgetHtml += '<div class="card" style="background: rgba(16,185,129,0.05);"><h3>' + b.cat + '</h3>';
+        budgetHtml += '<p style="color: #94a3b8;">₱' + (b.spent || 0).toFixed(2) + ' / ₱' + b.limit + '</p>';
+        budgetHtml += '<div style="width: 100%; background: #334155; height: 12px; border-radius: 6px; margin: 10px 0;">';
+        budgetHtml += '<div style="width: ' + Math.min(pct, 100) + '%; background: ' + color + '; height: 12px; border-radius: 6px;"></div></div>';
+        budgetHtml += '<p style="font-size: 12px; color: #64748b;">' + pct.toFixed(1) + '% used</p></div>';
+      });
+      document.getElementById('budget-list').innerHTML = budgetHtml;
+      
+      // Expense list
+      let expHtml = '';
+      expenses.slice(0, 10).forEach(e => {
+        expHtml += '<div style="display: flex; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 8px;">';
+        expHtml += '<div><div style="font-weight: 600;">' + e.desc + '</div>';
+        expHtml += '<div style="font-size: 13px; color: #94a3b8;">' + e.cat + ' • ' + e.date + '</div></div>';
+        expHtml += '<div style="display: flex; align-items: center; gap: 10px;"><span style="color: #ef4444; font-weight: bold;">-₱' + e.amount.toFixed(2) + '</span>';
+        expHtml += '<button class="btn-danger" onclick="deleteExpense(' + e.id + ')">🗑️</button></div></div>';
+      });
+      document.getElementById('expense-list').innerHTML = expHtml || '<p style="color: #64748b;">No expenses yet</p>';
+      
+      // Salary list
+      let salHtml = '';
+      salaries.forEach(s => {
+        salHtml += '<div style="display: flex; justify-content: space-between; padding: 15px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); border-radius: 12px; margin-bottom: 10px;">';
+        salHtml += '<div><div style="font-size: 20px; font-weight: bold; color: #10b981;">₱' + parseFloat(s.amount).toFixed(2) + '</div>';
+        salHtml += '<div style="font-size: 14px; color: #94a3b8;">' + s.date + ' • ' + s.source;
+        if (s.period) salHtml += ' • ' + s.period;
+        salHtml += '</div>';
+        if (s.notes) salHtml += '<div style="font-size: 12px; color: #64748b; margin-top: 5px;">' + s.notes + '</div>';
+        salHtml += '</div><button class="btn-danger" onclick="deleteSalary(' + s.id + ')">🗑️</button></div>';
+      });
+      document.getElementById('salary-list').innerHTML = salHtml || '<p style="color: #64748b;">No salary records yet</p>';
+    }
+    
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.remove('hidden');
+      });
+    });
+    
+    // Preview calculations
+    ['w1', 'w2'].forEach(prefix => {
+      const rate = prefix === 'w1' ? 125 : 150;
+      ['timein', 'timeout', 'ot'].forEach(field => {
+        document.getElementById(prefix + '-' + field).addEventListener('input', () => {
+          const timeIn = document.getElementById(prefix + '-timein').value;
+          const timeOut = document.getElementById(prefix + '-timeout').value;
+          const ot = parseFloat(document.getElementById(prefix + '-ot').value) || 0;
+          
+          if (timeIn && timeOut) {
+            const reg = calcHours(timeIn, timeOut);
+            const regPay = reg * rate;
+            const otPay = ot * rate * 1.5;
+            const total = regPay + otPay;
+            
+            const preview = document.getElementById(prefix + '-preview');
+            preview.innerHTML = '<strong>Preview:</strong> Regular: ' + reg.toFixed(2) + 'h = ₱' + regPay.toFixed(2) + 
+                              ' | OT: ' + ot + 'h = ₱' + otPay.toFixed(2) + ' | Total: ₱' + total.toFixed(2);
+            preview.classList.remove('hidden');
+          }
+        });
+      });
+    });
+    
+    // Set default month
+    const now = new Date();
+    document.getElementById('cutoff-month').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    
+    // Initialize
+    loadData();
   </script>
 </body>
 </html>

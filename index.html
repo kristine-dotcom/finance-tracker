@@ -983,9 +983,11 @@
         // Module work
         if (filtered1Modules.length > 0) {
           html += '<h4 style="color: #06b6d4; font-size: 14px; margin-bottom: 10px;">📚 Module Work</h4>';
-          html += '<table><thead><tr><th>Date</th><th class="text-right">Hours</th><th class="text-right">Rate</th><th class="text-right">Pay</th></tr></thead><tbody>';
+          html += '<table><thead><tr><th>Date</th><th>Module</th><th class="text-right">Hours</th><th class="text-right">Rate</th><th class="text-right">Pay</th></tr></thead><tbody>';
           filtered1Modules.forEach(e => {
-            html += '<tr><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
+            html += '<tr><td>' + e.date + '</td>';
+            html += '<td>' + (e.notes || '-') + '</td>';
+            html += '<td class="text-right">' + e.hours + 'h</td>';
             html += '<td class="text-right">₱' + e.rate + '</td>';
             html += '<td class="text-right">₱' + e.pay + '</td></tr>';
             w1Total += parseFloat(e.pay);
@@ -1017,9 +1019,11 @@
         // Module work
         if (filtered2Modules.length > 0) {
           html += '<h4 style="color: #06b6d4; font-size: 14px; margin-bottom: 10px;">📚 Module Work</h4>';
-          html += '<table><thead><tr><th>Date</th><th class="text-right">Hours</th><th class="text-right">Rate</th><th class="text-right">Pay</th></tr></thead><tbody>';
+          html += '<table><thead><tr><th>Date</th><th>Module</th><th class="text-right">Hours</th><th class="text-right">Rate</th><th class="text-right">Pay</th></tr></thead><tbody>';
           filtered2Modules.forEach(e => {
-            html += '<tr><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
+            html += '<tr><td>' + e.date + '</td>';
+            html += '<td>' + (e.notes || '-') + '</td>';
+            html += '<td class="text-right">' + e.hours + 'h</td>';
             html += '<td class="text-right">₱' + e.rate + '</td>';
             html += '<td class="text-right">₱' + e.pay + '</td></tr>';
             w2Total += parseFloat(e.pay);

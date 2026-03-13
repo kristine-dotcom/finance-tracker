@@ -207,6 +207,20 @@
       color: #06b6d4;
     }
     
+    /* Calendar styles */
+    .calendar-day {
+      min-height: 80px;
+      padding: 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .calendar-day:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    
     @media (max-width: 768px) {
       .form-grid { grid-template-columns: 1fr; }
       table { font-size: 12px; }
@@ -231,8 +245,11 @@
       <div class="tab active" data-tab="dashboard">📊 Dashboard</div>
       <div class="tab" data-tab="work1">⏰ Jason Cobine</div>
       <div class="tab" data-tab="work2">⏰ David Perlov</div>
+      <div class="tab" data-tab="reports">📈 Reports</div>
+      <div class="tab" data-tab="calendar">📅 Calendar</div>
       <div class="tab" data-tab="invoice">📄 Invoice</div>
       <div class="tab" data-tab="budgets">💸 Budgets</div>
+      <div class="tab" data-tab="savings">🎯 Savings</div>
       <div class="tab" data-tab="salary">💰 Sahod</div>
     </div>
     
@@ -474,6 +491,7 @@
       <div id="invoice-content" class="hidden">
         <div class="card">
           <div style="text-align: center; margin-bottom: 30px;">
+            <p style="font-size: 14px; color: #64748b; margin-bottom: 5px;" id="invoice-number"></p>
             <h1 style="font-size: 36px; margin-bottom: 10px;">WORK INVOICE</h1>
             <p id="invoice-header"></p>
           </div>
@@ -549,6 +567,54 @@
         <div id="salary-list"></div>
       </div>
     </div>
+    
+    <!-- Reports Tab -->
+    <div id="tab-reports" class="tab-content hidden">
+      <div class="card">
+        <h2>📊 Monthly Summary</h2>
+        <div class="form-grid" style="grid-template-columns: 1fr auto;">
+          <select id="report-month">
+            <!-- Populated by JS -->
+          </select>
+          <button onclick="generateMonthlyReport()">Generate Report</button>
+        </div>
+      </div>
+      
+      <div id="monthly-report-content"></div>
+    </div>
+    
+    <!-- Calendar Tab -->
+    <div id="tab-calendar" class="tab-content hidden">
+      <div class="card">
+        <h2>📅 Work Calendar</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <button onclick="changeCalendarMonth(-1)">← Prev</button>
+          <h3 id="calendar-month-display" style="margin: 0;"></h3>
+          <button onclick="changeCalendarMonth(1)">Next →</button>
+        </div>
+        <div id="calendar-grid"></div>
+      </div>
+      
+      <div id="calendar-details" class="card hidden">
+        <h3 id="calendar-date-title"></h3>
+        <div id="calendar-day-details"></div>
+      </div>
+    </div>
+    
+    <!-- Savings Goals Tab -->
+    <div id="tab-savings" class="tab-content hidden">
+      <div class="card">
+        <h2>Add Savings Goal</h2>
+        <div class="form-grid">
+          <input type="text" id="goal-name" placeholder="Goal Name (e.g., New Laptop)">
+          <input type="number" id="goal-target" placeholder="Target Amount">
+          <input type="number" id="goal-current" placeholder="Current Savings" value="0">
+          <button onclick="addSavingsGoal()">+ Add Goal</button>
+        </div>
+      </div>
+      
+      <div id="savings-goals-list"></div>
+    </div>
   </div>
   
   <script>
@@ -564,6 +630,10 @@
     let budgets = [];
     let expenses = [];
     let salaries = [];
+    let savingsGoals = []; // Savings goals
+    let invoiceCounter = parseInt(localStorage.getItem('invoiceCounter') || '0'); // Auto-increment invoice number
+    let calendarMonth = new Date().getMonth();
+    let calendarYear = new Date().getFullYear();
     
     // Save work names
     function saveWorkNames() {
@@ -614,6 +684,7 @@
       budgets = JSON.parse(localStorage.getItem('budgets') || '[]');
       expenses = JSON.parse(localStorage.getItem('expenses') || '[]');
       salaries = JSON.parse(localStorage.getItem('salaries') || '[]');
+      savingsGoals = JSON.parse(localStorage.getItem('savingsGoals') || '[]');
       render();
     }
     
@@ -955,6 +1026,12 @@
       const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
       const monthName = monthNames[monthNum - 1];
       
+      // Generate invoice number (auto-increment)
+      invoiceCounter++;
+      localStorage.setItem('invoiceCounter', invoiceCounter);
+      const invoiceNum = 'INV-' + year + '-' + String(monthNum).padStart(2, '0') + '-' + String(invoiceCounter).padStart(3, '0');
+      document.getElementById('invoice-number').textContent = invoiceNum;
+      
       document.getElementById('invoice-header').innerHTML = 
         (period === '1' ? '1st' : '2nd') + ' Half of ' + monthName + ' ' + year + '<br>' +
         'Period: ' + startDay + '-' + endDay + ' ' + monthName + ' ' + year;
@@ -1043,6 +1120,215 @@
     // Copy Invoice
     function copyInvoice() {
       alert('Invoice copied! (Basic text copy - use Print/PDF for full invoice)');
+    }
+    
+    // Savings Goals Functions
+    function addSavingsGoal() {
+      const name = document.getElementById('goal-name').value.trim();
+      const target = parseFloat(document.getElementById('goal-target').value);
+      const current = parseFloat(document.getElementById('goal-current').value) || 0;
+      
+      if (!name || !target || target <= 0) return alert('Please fill all fields with valid amounts!');
+      
+      savingsGoals.push({
+        id: Date.now(),
+        name,
+        target,
+        current
+      });
+      
+      save('savingsGoals', savingsGoals);
+      document.getElementById('goal-name').value = '';
+      document.getElementById('goal-target').value = '';
+      document.getElementById('goal-current').value = '0';
+    }
+    
+    function updateSavingsGoal(id, amount) {
+      const goal = savingsGoals.find(g => g.id === id);
+      if (!goal) return;
+      
+      const addAmount = parseFloat(prompt('Add to savings:', '0'));
+      if (isNaN(addAmount) || addAmount <= 0) return;
+      
+      goal.current = Math.min(parseFloat(goal.current) + addAmount, parseFloat(goal.target));
+      save('savingsGoals', savingsGoals);
+    }
+    
+    function deleteSavingsGoal(id) {
+      if (!confirm('Delete this savings goal?')) return;
+      savingsGoals = savingsGoals.filter(g => g.id !== id);
+      save('savingsGoals', savingsGoals);
+    }
+    
+    // Monthly Report Function
+    function generateMonthlyReport() {
+      const monthValue = document.getElementById('report-month').value;
+      if (!monthValue) return alert('Select a month!');
+      
+      const [year, month] = monthValue.split('-').map(Number);
+      const startDate = new Date(year, month - 1, 1);
+      const endDate = new Date(year, month, 0);
+      
+      const w1Entries = work1.filter(e => {
+        const d = new Date(e.date);
+        return d >= startDate && d <= endDate;
+      });
+      
+      const w2Entries = work2.filter(e => {
+        const d = new Date(e.date);
+        return d >= startDate && d <= endDate;
+      });
+      
+      const w1Mods = work1Modules.filter(e => {
+        const d = new Date(e.date);
+        return d >= startDate && d <= endDate;
+      });
+      
+      const w2Mods = work2Modules.filter(e => {
+        const d = new Date(e.date);
+        return d >= startDate && d <= endDate;
+      });
+      
+      const w1RegTotal = w1Entries.reduce((s, e) => s + parseFloat(e.total), 0);
+      const w1ModTotal = w1Mods.reduce((s, e) => s + parseFloat(e.pay), 0);
+      const w1RegHours = w1Entries.reduce((s, e) => s + parseFloat(e.regHrs), 0);
+      const w1ModHours = w1Mods.reduce((s, e) => s + parseFloat(e.hours), 0);
+      
+      const w2RegTotal = w2Entries.reduce((s, e) => s + parseFloat(e.total), 0);
+      const w2ModTotal = w2Mods.reduce((s, e) => s + parseFloat(e.pay), 0);
+      const w2RegHours = w2Entries.reduce((s, e) => s + parseFloat(e.regHrs), 0);
+      const w2ModHours = w2Mods.reduce((s, e) => s + parseFloat(e.hours), 0);
+      
+      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      
+      let html = '<div class="card"><h2>' + monthNames[month - 1] + ' ' + year + ' Summary</h2>';
+      
+      // Jason Cobine
+      html += '<div style="padding: 20px; background: rgba(16, 185, 129, 0.05); border-radius: 12px; margin-bottom: 20px;">';
+      html += '<h3 style="color: #10b981;">' + work1Name + '</h3>';
+      html += '<p style="margin: 10px 0;">Regular Work: ' + w1Entries.length + ' days, ' + w1RegHours.toFixed(1) + 'h → <strong>₱' + w1RegTotal.toFixed(2) + '</strong></p>';
+      html += '<p style="margin: 10px 0;">Module Work: ' + w1Mods.length + ' entries, ' + w1ModHours.toFixed(1) + 'h → <strong>₱' + w1ModTotal.toFixed(2) + '</strong></p>';
+      html += '<p style="margin-top: 15px; font-size: 20px;"><strong>Total: ₱' + (w1RegTotal + w1ModTotal).toFixed(2) + '</strong></p>';
+      html += '</div>';
+      
+      // David Perlov
+      html += '<div style="padding: 20px; background: rgba(6, 182, 212, 0.05); border-radius: 12px; margin-bottom: 20px;">';
+      html += '<h3 style="color: #06b6d4;">' + work2Name + '</h3>';
+      html += '<p style="margin: 10px 0;">Regular Work: ' + w2Entries.length + ' days, ' + w2RegHours.toFixed(1) + 'h → <strong>₱' + w2RegTotal.toFixed(2) + '</strong></p>';
+      html += '<p style="margin: 10px 0;">Module Work: ' + w2Mods.length + ' entries, ' + w2ModHours.toFixed(1) + 'h → <strong>₱' + w2ModTotal.toFixed(2) + '</strong></p>';
+      html += '<p style="margin-top: 15px; font-size: 20px;"><strong>Total: ₱' + (w2RegTotal + w2ModTotal).toFixed(2) + '</strong></p>';
+      html += '</div>';
+      
+      // Grand Total
+      const grandTotal = w1RegTotal + w1ModTotal + w2RegTotal + w2ModTotal;
+      html += '<div style="text-align: center; padding: 20px; background: rgba(16, 185, 129, 0.1); border-radius: 12px;">';
+      html += '<h2 style="font-size: 32px; color: #10b981;">GRAND TOTAL: ₱' + grandTotal.toFixed(2) + '</h2>';
+      html += '</div></div>';
+      
+      document.getElementById('monthly-report-content').innerHTML = html;
+    }
+    
+    // Calendar Functions
+    function renderCalendar() {
+      const firstDay = new Date(calendarYear, calendarMonth, 1);
+      const lastDay = new Date(calendarYear, calendarMonth + 1, 0);
+      const startDay = firstDay.getDay();
+      const daysInMonth = lastDay.getDate();
+      
+      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      document.getElementById('calendar-month-display').textContent = monthNames[calendarMonth] + ' ' + calendarYear;
+      
+      let html = '<div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;">';
+      
+      // Day headers
+      ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
+        html += '<div style="text-align: center; padding: 10px; font-weight: 600; color: #64748b;">' + day + '</div>';
+      });
+      
+      // Empty cells before first day
+      for (let i = 0; i < startDay; i++) {
+        html += '<div style="padding: 40px 10px; background: rgba(100, 116, 139, 0.05); border-radius: 8px;"></div>';
+      }
+      
+      // Days
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = calendarYear + '-' + String(calendarMonth + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+        const w1Entry = work1.find(e => e.date === dateStr);
+        const w2Entry = work2.find(e => e.date === dateStr);
+        const w1Mod = work1Modules.find(e => e.date === dateStr);
+        const w2Mod = work2Modules.find(e => e.date === dateStr);
+        
+        let bgColor = 'rgba(100, 116, 139, 0.05)';
+        let indicators = '';
+        
+        if (w1Entry || w1Mod) {
+          bgColor = 'rgba(16, 185, 129, 0.1)';
+          indicators += '<div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block; margin: 2px;"></div>';
+        }
+        if (w2Entry || w2Mod) {
+          bgColor = w1Entry || w1Mod ? 'rgba(16, 185, 129, 0.15)' : 'rgba(6, 182, 212, 0.1)';
+          indicators += '<div style="width: 8px; height: 8px; background: #06b6d4; border-radius: 50%; display: inline-block; margin: 2px;"></div>';
+        }
+        
+        html += '<div onclick="showCalendarDay(\'' + dateStr + '\')" style="padding: 10px; background: ' + bgColor + '; border-radius: 8px; cursor: pointer; min-height: 60px;" onmouseover="this.style.background=\'rgba(16, 185, 129, 0.2)\'" onmouseout="this.style.background=\'' + bgColor + '\'">';
+        html += '<div style="font-weight: 600; margin-bottom: 5px;">' + day + '</div>';
+        html += '<div>' + indicators + '</div>';
+        html += '</div>';
+      }
+      
+      html += '</div>';
+      document.getElementById('calendar-grid').innerHTML = html;
+    }
+    
+    function changeCalendarMonth(delta) {
+      calendarMonth += delta;
+      if (calendarMonth < 0) {
+        calendarMonth = 11;
+        calendarYear--;
+      } else if (calendarMonth > 11) {
+        calendarMonth = 0;
+        calendarYear++;
+      }
+      renderCalendar();
+    }
+    
+    function showCalendarDay(dateStr) {
+      const w1Entries = work1.filter(e => e.date === dateStr);
+      const w2Entries = work2.filter(e => e.date === dateStr);
+      const w1Mods = work1Modules.filter(e => e.date === dateStr);
+      const w2Mods = work2Modules.filter(e => e.date === dateStr);
+      
+      if (w1Entries.length === 0 && w2Entries.length === 0 && w1Mods.length === 0 && w2Mods.length === 0) {
+        return;
+      }
+      
+      const date = new Date(dateStr);
+      document.getElementById('calendar-date-title').textContent = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      
+      let html = '';
+      
+      if (w1Entries.length > 0 || w1Mods.length > 0) {
+        html += '<h4 style="color: #10b981; margin-top: 15px;">' + work1Name + '</h4>';
+        w1Entries.forEach(e => {
+          html += '<p>Regular: ' + e.timeIn + '-' + e.timeOut + ' (' + e.regHrs + 'h) → ₱' + e.total + '</p>';
+        });
+        w1Mods.forEach(e => {
+          html += '<p>Module: ' + e.hours + 'h - ' + (e.notes || 'No notes') + ' → ₱' + e.pay + '</p>';
+        });
+      }
+      
+      if (w2Entries.length > 0 || w2Mods.length > 0) {
+        html += '<h4 style="color: #06b6d4; margin-top: 15px;">' + work2Name + '</h4>';
+        w2Entries.forEach(e => {
+          html += '<p>Regular: ' + e.timeIn + '-' + e.timeOut + ' (' + e.regHrs + 'h) → ₱' + e.total + '</p>';
+        });
+        w2Mods.forEach(e => {
+          html += '<p>Module: ' + e.hours + 'h - ' + (e.notes || 'No notes') + ' → ₱' + e.pay + '</p>';
+        });
+      }
+      
+      document.getElementById('calendar-day-details').innerHTML = html;
+      document.getElementById('calendar-details').classList.remove('hidden');
     }
     
     // Render all
@@ -1234,6 +1520,31 @@
         salHtml += '</div><button class="btn-danger" onclick="deleteSalary(' + s.id + ')">🗑️</button></div>';
       });
       document.getElementById('salary-list').innerHTML = salHtml || '<p style="color: #64748b;">No salary records yet</p>';
+      
+      // Savings Goals list
+      let goalsHtml = '';
+      savingsGoals.forEach(g => {
+        const percent = (parseFloat(g.current) / parseFloat(g.target)) * 100;
+        const color = percent >= 100 ? '#10b981' : percent >= 75 ? '#06b6d4' : '#f59e0b';
+        
+        goalsHtml += '<div class="card" style="background: rgba(16,185,129,0.05);">';
+        goalsHtml += '<div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">';
+        goalsHtml += '<h3>' + g.name + '</h3>';
+        goalsHtml += '<button class="btn-danger" onclick="deleteSavingsGoal(' + g.id + ')">🗑️</button>';
+        goalsHtml += '</div>';
+        goalsHtml += '<p style="color: #94a3b8; margin-bottom: 10px;">₱' + parseFloat(g.current).toFixed(2) + ' / ₱' + parseFloat(g.target).toFixed(2) + '</p>';
+        goalsHtml += '<div style="width: 100%; background: #334155; height: 16px; border-radius: 8px; margin-bottom: 10px; overflow: hidden;">';
+        goalsHtml += '<div style="width: ' + Math.min(percent, 100) + '%; background: ' + color + '; height: 16px; transition: width 0.3s;"></div></div>';
+        goalsHtml += '<div style="display: flex; justify-content: space-between; align-items: center;">';
+        goalsHtml += '<p style="font-size: 14px; color: #64748b;">' + percent.toFixed(1) + '% complete</p>';
+        if (percent < 100) {
+          goalsHtml += '<button class="btn-secondary" onclick="updateSavingsGoal(' + g.id + ')" style="padding: 8px 16px; font-size: 13px;">+ Add Savings</button>';
+        } else {
+          goalsHtml += '<span style="color: #10b981; font-weight: 600;">✅ Goal Reached!</span>';
+        }
+        goalsHtml += '</div></div>';
+      });
+      document.getElementById('savings-goals-list').innerHTML = goalsHtml;
     }
     
     // Tab switching
@@ -1273,6 +1584,22 @@
     // Set default month
     const now = new Date();
     document.getElementById('cutoff-month').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    
+    // Initialize Reports month dropdown (last 12 months)
+    const reportMonthDropdown = document.getElementById('report-month');
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const value = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+      const text = d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = text;
+      reportMonthDropdown.appendChild(option);
+    }
+    reportMonthDropdown.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    
+    // Initialize calendar
+    renderCalendar();
     
     // Initialize
     loadData();

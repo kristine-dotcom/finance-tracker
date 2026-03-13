@@ -238,37 +238,51 @@
     
     <!-- Dashboard Tab -->
     <div id="tab-dashboard" class="tab-content">
+      <div class="card" style="margin-bottom: 20px;">
+        <h2>📊 Dashboard - Current Cutoff</h2>
+        <div class="form-grid" style="grid-template-columns: 1fr 1fr auto;">
+          <select id="dash-month">
+            <!-- Populated by JS -->
+          </select>
+          <select id="dash-period">
+            <option value="1">1st Half (1-15)</option>
+            <option value="2">2nd Half (16-End)</option>
+          </select>
+          <button onclick="updateDashboard()" class="btn-secondary">Update</button>
+        </div>
+      </div>
+      
       <div class="stat-grid">
         <div class="stat-card">
           <div style="font-size: 32px;">📅</div>
           <div class="stat-value" id="stat-days">0</div>
-          <div class="stat-label">Work Days</div>
+          <div class="stat-label">Work Days (This Cutoff)</div>
         </div>
         <div class="stat-card">
           <div style="font-size: 32px;">⏰</div>
           <div class="stat-value" id="stat-hours">0h</div>
-          <div class="stat-label">Total Hours</div>
+          <div class="stat-label">Total Hours (This Cutoff)</div>
         </div>
         <div class="stat-card">
           <div style="font-size: 32px;">💰</div>
           <div class="stat-value" id="stat-earnings">₱0</div>
-          <div class="stat-label">Total Earnings</div>
+          <div class="stat-label">Earnings (All Time)</div>
         </div>
         <div class="stat-card">
           <div style="font-size: 32px;">💸</div>
           <div class="stat-value" id="stat-expenses">₱0</div>
-          <div class="stat-label">Total Expenses</div>
+          <div class="stat-label">Expenses (All Time)</div>
         </div>
       </div>
       
       <div class="card">
         <h2>Welcome! 🎉</h2>
         <p style="line-height: 1.8; color: #cbd5e1;">
-          Track your work hours, generate invoices, manage budgets, and monitor expenses all in one place. 
-          Navigate through the tabs to access different features. Your data is saved automatically!
+          Track your work hours per cutoff, generate invoices, manage budgets, and monitor expenses. 
+          Select cutoff period above to see hours and days for that specific period!
         </p>
         <p style="margin-top: 15px; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; color: #10b981;">
-          <strong>✅ NEW:</strong> Overnight shifts now supported! Enter 4:00 PM to 12:00 AM and it will calculate 8 hours correctly.
+          <strong>✅ NEW:</strong> Module Work tracking + Overnight shifts + Per-cutoff dashboard stats!
         </p>
       </div>
       
@@ -328,15 +342,15 @@
         </div>
         
         <!-- Module Work Section -->
-        <div style="margin-top: 30px; padding: 20px; background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 12px;">
-          <h2 style="color: #ec4899; margin-bottom: 5px; font-size: 24px;">📚 Module Work</h2>
+        <div style="margin-top: 30px; padding: 20px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px;">
+          <h2 style="color: #f59e0b; margin-bottom: 5px; font-size: 24px;">📚 Module Work</h2>
           <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Rate: ₱187.50/hr (OT rate)</p>
           
           <div class="form-grid">
             <input type="date" id="w1-mod-date" required>
             <input type="number" id="w1-mod-hours" placeholder="Hours" step="0.5" min="0">
             <input type="text" id="w1-mod-notes" placeholder="Notes (optional)">
-            <button onclick="addWork1Module()" style="background: #ec4899; border-color: #ec4899;">+ Add Module</button>
+            <button onclick="addWork1Module()" style="background: #f59e0b; border-color: #f59e0b;">+ Add Module</button>
           </div>
           
           <div class="overflow-auto" style="margin-top: 15px;">
@@ -405,15 +419,15 @@
         </div>
         
         <!-- Module Work Section -->
-        <div style="margin-top: 30px; padding: 20px; background: rgba(236, 72, 153, 0.1); border: 1px solid rgba(236, 72, 153, 0.3); border-radius: 12px;">
-          <h3 style="color: #ec4899; margin-bottom: 10px;">📚 Module Work</h3>
+        <div style="margin-top: 30px; padding: 20px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px;">
+          <h3 style="color: #f59e0b; margin-bottom: 10px;">📚 Module Work</h3>
           <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Rate: ₱225/hr (OT rate)</p>
           
           <div class="form-grid">
             <input type="date" id="w2-mod-date" required>
             <input type="number" id="w2-mod-hours" placeholder="Hours" step="0.5" min="0">
             <input type="text" id="w2-mod-notes" placeholder="Notes (optional)">
-            <button onclick="addWork2Module()" style="background: #ec4899; border-color: #ec4899;">+ Add Module</button>
+            <button onclick="addWork2Module()" style="background: #f59e0b; border-color: #f59e0b;">+ Add Module</button>
           </div>
           
           <div class="overflow-auto" style="margin-top: 15px;">
@@ -964,7 +978,7 @@
         
         // Module work
         if (filtered1Modules.length > 0) {
-          html += '<h4 style="color: #ec4899; font-size: 14px; margin-bottom: 10px;">📚 Module Work</h4>';
+          html += '<h4 style="color: #f59e0b; font-size: 14px; margin-bottom: 10px;">📚 Module Work</h4>';
           html += '<table><thead><tr><th>Date</th><th class="text-right">Hours</th><th class="text-right">Rate</th><th class="text-right">Pay</th></tr></thead><tbody>';
           filtered1Modules.forEach(e => {
             html += '<tr><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
@@ -998,7 +1012,7 @@
         
         // Module work
         if (filtered2Modules.length > 0) {
-          html += '<h4 style="color: #ec4899; font-size: 14px; margin-bottom: 10px;">📚 Module Work</h4>';
+          html += '<h4 style="color: #f59e0b; font-size: 14px; margin-bottom: 10px;">📚 Module Work</h4>';
           html += '<table><thead><tr><th>Date</th><th class="text-right">Hours</th><th class="text-right">Rate</th><th class="text-right">Pay</th></tr></thead><tbody>';
           filtered2Modules.forEach(e => {
             html += '<tr><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
@@ -1023,18 +1037,50 @@
       alert('Invoice copied! (Basic text copy - use Print/PDF for full invoice)');
     }
     
+    // Update dashboard with selected cutoff
+    function updateDashboard() {
+      render();
+    }
+    
     // Render all
     function render() {
-      // Dashboard stats
-      const totalDays = work1.length + work2.length;
-      const totalHrs = work1.reduce((s, e) => s + parseFloat(e.regHrs), 0) + 
-                       work2.reduce((s, e) => s + parseFloat(e.regHrs), 0);
-      // Only count earnings from Salary tab to avoid double counting
+      // Dashboard stats - per cutoff period
+      const dashMonth = document.getElementById('dash-month').value;
+      const dashPeriod = document.getElementById('dash-period').value;
+      
+      let cutoffDays = 0;
+      let cutoffHours = 0;
+      
+      if (dashMonth) {
+        const [year, monthNum] = dashMonth.split('-').map(Number);
+        const startDay = dashPeriod === '1' ? 1 : 16;
+        const endDay = dashPeriod === '1' ? 15 : new Date(year, monthNum, 0).getDate();
+        
+        const startDate = new Date(year, monthNum - 1, startDay);
+        const endDate = new Date(year, monthNum - 1, endDay);
+        
+        // Count work entries in cutoff period
+        const w1InCutoff = work1.filter(e => {
+          const d = new Date(e.date);
+          return d >= startDate && d <= endDate;
+        });
+        
+        const w2InCutoff = work2.filter(e => {
+          const d = new Date(e.date);
+          return d >= startDate && d <= endDate;
+        });
+        
+        cutoffDays = w1InCutoff.length + w2InCutoff.length;
+        cutoffHours = w1InCutoff.reduce((s, e) => s + parseFloat(e.regHrs || 0), 0) + 
+                      w2InCutoff.reduce((s, e) => s + parseFloat(e.regHrs || 0), 0);
+      }
+      
+      // Earnings and expenses are all-time
       const totalEarn = salaries.reduce((s, e) => s + parseFloat(e.amount), 0);
       const totalExp = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
       
-      document.getElementById('stat-days').textContent = totalDays;
-      document.getElementById('stat-hours').textContent = totalHrs.toFixed(1) + 'h';
+      document.getElementById('stat-days').textContent = cutoffDays;
+      document.getElementById('stat-hours').textContent = cutoffHours.toFixed(1) + 'h';
       document.getElementById('stat-earnings').textContent = '₱' + totalEarn.toFixed(2);
       document.getElementById('stat-expenses').textContent = '₱' + totalExp.toFixed(2);
       
@@ -1188,6 +1234,26 @@
     // Set default month
     const now = new Date();
     document.getElementById('cutoff-month').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    
+    // Initialize dashboard month dropdown
+    const dashMonthDropdown = document.getElementById('dash-month');
+    const dashPeriodDropdown = document.getElementById('dash-period');
+    
+    // Populate last 6 months
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const value = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+      const text = d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = text;
+      dashMonthDropdown.appendChild(option);
+    }
+    
+    // Set current month and determine cutoff period
+    dashMonthDropdown.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+    const currentDay = now.getDate();
+    dashPeriodDropdown.value = currentDay <= 15 ? '1' : '2';
     
     // Initialize
     loadData();

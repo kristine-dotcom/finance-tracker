@@ -282,7 +282,7 @@
           Select cutoff period above to see hours and days for that specific period!
         </p>
         <p style="margin-top: 15px; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; color: #10b981;">
-          <strong>✅ NEW:</strong> Module Work tracking + Overnight shifts + Per-cutoff dashboard stats!
+          <strong>✅ HOW IT WORKS:</strong> Add work entries → Transfer to Salary → Entries move to 📦 Transferred section → Generate invoices from ALL entries (active + transferred) anytime!
         </p>
       </div>
       
@@ -371,7 +371,7 @@
         </div>
         
         <div style="margin-top: 15px; padding: 12px; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; font-size: 13px; color: #cbd5e1;">
-          <strong>💡 Note:</strong> Clicking "Transfer to Salary" will create a salary entry. Your work entries remain here for your records. Dashboard earnings count from Salary tab only.
+          <strong>💡 Note:</strong> Clicking "Transfer to Salary" will mark entries as transferred and move them to the 📦 Transferred section below. You can still generate invoices from all entries (active + transferred).
         </div>
         
         <button class="btn-secondary" onclick="transferToSalary('work1')" style="margin-top: 10px;">
@@ -448,7 +448,7 @@
         </div>
         
         <div style="margin-top: 15px; padding: 12px; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; font-size: 13px; color: #cbd5e1;">
-          <strong>💡 Note:</strong> Clicking "Transfer to Salary" will create a salary entry. Your work entries remain here for your records. Dashboard earnings count from Salary tab only.
+          <strong>💡 Note:</strong> Clicking "Transfer to Salary" will mark entries as transferred and move them to the 📦 Transferred section below. You can still generate invoices from all entries (active + transferred).
         </div>
         
         <button class="btn-secondary" onclick="transferToSalary('work2')" style="margin-top: 10px;">
@@ -796,34 +796,52 @@
       const moduleData = type === 'work1' ? work1Modules : work2Modules;
       const workName = type === 'work1' ? work1Name : work2Name;
       
-      if (data.length === 0 && moduleData.length === 0) return alert('No entries to transfer!');
+      // Filter only non-transferred entries
+      const activeData = data.filter(e => !e.transferred);
+      const activeModules = moduleData.filter(e => !e.transferred);
+      
+      if (activeData.length === 0 && activeModules.length === 0) return alert('No entries to transfer!');
       
       // Calculate total from both regular and module work
-      const regularTotal = data.reduce((sum, e) => sum + parseFloat(e.total), 0);
-      const moduleTotal = moduleData.reduce((sum, e) => sum + parseFloat(e.pay), 0);
+      const regularTotal = activeData.reduce((sum, e) => sum + parseFloat(e.total), 0);
+      const moduleTotal = activeModules.reduce((sum, e) => sum + parseFloat(e.pay), 0);
       const total = regularTotal + moduleTotal;
       
       // Get all dates
       const allDates = [
-        ...data.map(e => e.date),
-        ...moduleData.map(e => e.date)
+        ...activeData.map(e => e.date),
+        ...activeModules.map(e => e.date)
       ].sort();
       
       const period = allDates.length > 0 ? allDates[0] + ' - ' + allDates[allDates.length - 1] : '';
       
       // Create notes
-      const regularCount = data.length;
-      const moduleCount = moduleData.length;
+      const regularCount = activeData.length;
+      const moduleCount = activeModules.length;
       let notes = [];
       if (regularCount > 0) notes.push(regularCount + ' regular days');
       if (moduleCount > 0) notes.push(moduleCount + ' module entries');
       const notesText = notes.join(', ') + ' transferred';
       
       // Confirm transfer
-      if (!confirm('Transfer ₱' + total.toFixed(2) + ' to Salary?\n\nRegular work: ₱' + regularTotal.toFixed(2) + '\nModule work: ₱' + moduleTotal.toFixed(2) + '\nTotal: ₱' + total.toFixed(2) + '\n\n' + workName + ' entries will remain visible here for your records.\n\nDashboard will count earnings from Salary tab only to avoid double counting.\n\nContinue?')) {
+      if (!confirm('Transfer ₱' + total.toFixed(2) + ' to Salary?\n\nRegular work: ₱' + regularTotal.toFixed(2) + '\nModule work: ₱' + moduleTotal.toFixed(2) + '\nTotal: ₱' + total.toFixed(2) + '\n\nEntries will be marked as transferred and moved to archive.\nYou can still generate invoices from transferred entries.\n\nContinue?')) {
         return;
       }
       
+      // Mark entries as transferred
+      activeData.forEach(e => e.transferred = true);
+      activeModules.forEach(e => e.transferred = true);
+      
+      // Save marked entries
+      if (type === 'work1') {
+        save('work1', work1);
+        save('work1Modules', work1Modules);
+      } else {
+        save('work2', work2);
+        save('work2Modules', work2Modules);
+      }
+      
+      // Create salary entry
       salaries.push({
         id: Date.now(),
         amount: total.toFixed(2),
@@ -834,7 +852,7 @@
       });
       
       save('salaries', salaries);
-      alert('✅ Transferred to Salary! Dashboard earnings now count from Salary tab only.');
+      alert('✅ Transferred to Salary!\n\nEntries moved to Transferred section.\nYou can still generate invoices from all entries.');
     }
     
     // Add Budget
@@ -1044,7 +1062,7 @@
     
     // Render all
     function render() {
-      // Dashboard stats - per cutoff period
+      // Dashboard stats - per cutoff period (only non-transferred entries)
       const dashMonth = document.getElementById('dash-month').value;
       const dashPeriod = document.getElementById('dash-period').value;
       
@@ -1059,15 +1077,15 @@
         const startDate = new Date(year, monthNum - 1, startDay);
         const endDate = new Date(year, monthNum - 1, endDay);
         
-        // Count work entries in cutoff period
+        // Count only non-transferred work entries in cutoff period
         const w1InCutoff = work1.filter(e => {
           const d = new Date(e.date);
-          return d >= startDate && d <= endDate;
+          return d >= startDate && d <= endDate && !e.transferred;
         });
         
         const w2InCutoff = work2.filter(e => {
           const d = new Date(e.date);
-          return d >= startDate && d <= endDate;
+          return d >= startDate && d <= endDate && !e.transferred;
         });
         
         cutoffDays = w1InCutoff.length + w2InCutoff.length;
@@ -1084,10 +1102,13 @@
       document.getElementById('stat-earnings').textContent = '₱' + totalEarn.toFixed(2);
       document.getElementById('stat-expenses').textContent = '₱' + totalExp.toFixed(2);
       
-      // Work 1 table
+      // Work 1 table - Active entries only
       let w1Html = '';
       let w1Tot = 0;
-      work1.forEach(e => {
+      const w1Active = work1.filter(e => !e.transferred);
+      const w1Transferred = work1.filter(e => e.transferred);
+      
+      w1Active.forEach(e => {
         w1Html += '<tr><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
         w1Html += '<td class="text-right">' + e.regHrs + '</td><td class="text-right">' + e.ot + '</td>';
         w1Html += '<td class="text-right">₱' + e.regPay + '</td><td class="text-right">₱' + e.otPay + '</td>';
@@ -1095,16 +1116,32 @@
         w1Html += '<td class="text-center"><button class="btn-danger" onclick="deleteWork(1,' + e.id + ')">🗑️</button></td></tr>';
         w1Tot += parseFloat(e.total);
       });
-      if (work1.length > 0) {
-        w1Html += '<tr class="total-row"><td colspan="6" class="text-right">TOTAL:</td>';
+      if (w1Active.length > 0) {
+        w1Html += '<tr class="total-row"><td colspan="6" class="text-right">ACTIVE TOTAL:</td>';
         w1Html += '<td class="text-right">₱' + w1Tot.toFixed(2) + '</td><td></td></tr>';
       }
+      
+      // Add transferred entries (greyed out)
+      if (w1Transferred.length > 0) {
+        w1Html += '<tr style="background: rgba(100,116,139,0.1);"><td colspan="8" style="padding: 8px; font-weight: 600; color: #64748b;">📦 Transferred (' + w1Transferred.length + ')</td></tr>';
+        w1Transferred.forEach(e => {
+          w1Html += '<tr style="opacity: 0.5; background: rgba(100,116,139,0.05);"><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
+          w1Html += '<td class="text-right">' + e.regHrs + '</td><td class="text-right">' + e.ot + '</td>';
+          w1Html += '<td class="text-right">₱' + e.regPay + '</td><td class="text-right">₱' + e.otPay + '</td>';
+          w1Html += '<td class="text-right">₱' + e.total + '</td>';
+          w1Html += '<td class="text-center">✅</td></tr>';
+        });
+      }
+      
       document.getElementById('w1-table').innerHTML = w1Html;
       
-      // Work 2 table
+      // Work 2 table - Active entries only
       let w2Html = '';
       let w2Tot = 0;
-      work2.forEach(e => {
+      const w2Active = work2.filter(e => !e.transferred);
+      const w2Transferred = work2.filter(e => e.transferred);
+      
+      w2Active.forEach(e => {
         w2Html += '<tr><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
         w2Html += '<td class="text-right">' + e.regHrs + '</td><td class="text-right">' + e.ot + '</td>';
         w2Html += '<td class="text-right">₱' + e.regPay + '</td><td class="text-right">₱' + e.otPay + '</td>';
@@ -1112,16 +1149,32 @@
         w2Html += '<td class="text-center"><button class="btn-danger" onclick="deleteWork(2,' + e.id + ')">🗑️</button></td></tr>';
         w2Tot += parseFloat(e.total);
       });
-      if (work2.length > 0) {
-        w2Html += '<tr class="total-row"><td colspan="6" class="text-right">TOTAL:</td>';
+      if (w2Active.length > 0) {
+        w2Html += '<tr class="total-row"><td colspan="6" class="text-right">ACTIVE TOTAL:</td>';
         w2Html += '<td class="text-right">₱' + w2Tot.toFixed(2) + '</td><td></td></tr>';
       }
+      
+      // Add transferred entries (greyed out)
+      if (w2Transferred.length > 0) {
+        w2Html += '<tr style="background: rgba(100,116,139,0.1);"><td colspan="8" style="padding: 8px; font-weight: 600; color: #64748b;">📦 Transferred (' + w2Transferred.length + ')</td></tr>';
+        w2Transferred.forEach(e => {
+          w2Html += '<tr style="opacity: 0.5; background: rgba(100,116,139,0.05);"><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
+          w2Html += '<td class="text-right">' + e.regHrs + '</td><td class="text-right">' + e.ot + '</td>';
+          w2Html += '<td class="text-right">₱' + e.regPay + '</td><td class="text-right">₱' + e.otPay + '</td>';
+          w2Html += '<td class="text-right">₱' + e.total + '</td>';
+          w2Html += '<td class="text-center">✅</td></tr>';
+        });
+      }
+      
       document.getElementById('w2-table').innerHTML = w2Html;
       
-      // Work 1 Module table
+      // Work 1 Module table - Active entries only
       let w1ModHtml = '';
       let w1ModTot = 0;
-      work1Modules.forEach(e => {
+      const w1ModActive = work1Modules.filter(e => !e.transferred);
+      const w1ModTransferred = work1Modules.filter(e => e.transferred);
+      
+      w1ModActive.forEach(e => {
         w1ModHtml += '<tr><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
         w1ModHtml += '<td class="text-right">₱' + e.rate + '</td>';
         w1ModHtml += '<td class="text-right">₱' + e.pay + '</td>';
@@ -1129,16 +1182,32 @@
         w1ModHtml += '<td class="text-center"><button class="btn-danger" onclick="deleteWork1Module(' + e.id + ')">🗑️</button></td></tr>';
         w1ModTot += parseFloat(e.pay);
       });
-      if (work1Modules.length > 0) {
-        w1ModHtml += '<tr class="total-row"><td colspan="3" class="text-right">TOTAL:</td>';
+      if (w1ModActive.length > 0) {
+        w1ModHtml += '<tr class="total-row"><td colspan="3" class="text-right">ACTIVE TOTAL:</td>';
         w1ModHtml += '<td class="text-right">₱' + w1ModTot.toFixed(2) + '</td><td colspan="2"></td></tr>';
       }
+      
+      // Add transferred module entries
+      if (w1ModTransferred.length > 0) {
+        w1ModHtml += '<tr style="background: rgba(100,116,139,0.1);"><td colspan="6" style="padding: 8px; font-weight: 600; color: #64748b;">📦 Transferred (' + w1ModTransferred.length + ')</td></tr>';
+        w1ModTransferred.forEach(e => {
+          w1ModHtml += '<tr style="opacity: 0.5; background: rgba(100,116,139,0.05);"><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
+          w1ModHtml += '<td class="text-right">₱' + e.rate + '</td>';
+          w1ModHtml += '<td class="text-right">₱' + e.pay + '</td>';
+          w1ModHtml += '<td>' + (e.notes || '-') + '</td>';
+          w1ModHtml += '<td class="text-center">✅</td></tr>';
+        });
+      }
+      
       document.getElementById('w1-mod-table').innerHTML = w1ModHtml;
       
-      // Work 2 Module table
+      // Work 2 Module table - Active entries only
       let w2ModHtml = '';
       let w2ModTot = 0;
-      work2Modules.forEach(e => {
+      const w2ModActive = work2Modules.filter(e => !e.transferred);
+      const w2ModTransferred = work2Modules.filter(e => e.transferred);
+      
+      w2ModActive.forEach(e => {
         w2ModHtml += '<tr><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
         w2ModHtml += '<td class="text-right">₱' + e.rate + '</td>';
         w2ModHtml += '<td class="text-right">₱' + e.pay + '</td>';
@@ -1146,10 +1215,23 @@
         w2ModHtml += '<td class="text-center"><button class="btn-danger" onclick="deleteWork2Module(' + e.id + ')">🗑️</button></td></tr>';
         w2ModTot += parseFloat(e.pay);
       });
-      if (work2Modules.length > 0) {
-        w2ModHtml += '<tr class="total-row"><td colspan="3" class="text-right">TOTAL:</td>';
+      if (w2ModActive.length > 0) {
+        w2ModHtml += '<tr class="total-row"><td colspan="3" class="text-right">ACTIVE TOTAL:</td>';
         w2ModHtml += '<td class="text-right">₱' + w2ModTot.toFixed(2) + '</td><td colspan="2"></td></tr>';
       }
+      
+      // Add transferred module entries
+      if (w2ModTransferred.length > 0) {
+        w2ModHtml += '<tr style="background: rgba(100,116,139,0.1);"><td colspan="6" style="padding: 8px; font-weight: 600; color: #64748b;">📦 Transferred (' + w2ModTransferred.length + ')</td></tr>';
+        w2ModTransferred.forEach(e => {
+          w2ModHtml += '<tr style="opacity: 0.5; background: rgba(100,116,139,0.05);"><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
+          w2ModHtml += '<td class="text-right">₱' + e.rate + '</td>';
+          w2ModHtml += '<td class="text-right">₱' + e.pay + '</td>';
+          w2ModHtml += '<td>' + (e.notes || '-') + '</td>';
+          w2ModHtml += '<td class="text-center">✅</td></tr>';
+        });
+      }
+      
       document.getElementById('w2-mod-table').innerHTML = w2ModHtml;
       
       // Budget category dropdown

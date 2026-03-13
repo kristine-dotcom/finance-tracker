@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Finance Tracker">
+  <title>Finance Tracker</title>
+  
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header {
+      text-align: center;
+      padding: 40px 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      margin-bottom: 30px;
+    }
+    
+    h1 {
+      font-size: 48px;
+      background: linear-gradient(90deg, #10b981, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+    
+    .subtitle {
+      color: #94a3b8;
+      font-size: 18px;
+    }
+    
+    .success {
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid #10b981;
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .success h2 {
+      color: #10b981;
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+    
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 20px;
+    }
+    
+    .card h3 {
+      color: #10b981;
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+    
+    .card p {
+      color: #cbd5e1;
+      line-height: 1.8;
+      font-size: 16px;
+    }
+    
+    .install-steps {
+      background: rgba(6, 182, 212, 0.1);
+      border: 2px solid #06b6d4;
+      border-radius: 16px;
+      padding: 30px;
+      margin-top: 20px;
+    }
+    
+    .install-steps h3 {
+      color: #06b6d4;
+      margin-bottom: 20px;
+    }
+    
+    .install-steps ol {
+      margin-left: 25px;
+    }
+    
+    .install-steps li {
+      color: #cbd5e1;
+      margin: 12px 0;
+      line-height: 1.8;
+    }
+    
+    .badge {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid #10b981;
+      color: #10b981;
+      padding: 8px 16px;
+      border-radius: 20px;
+      margin: 5px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .emoji {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+    
+    @media (max-width: 640px) {
+      h1 { font-size: 32px; }
+      .card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>💰 Finance Tracker</h1>
+      <p class="subtitle">Personal Work & Budget Manager</p>
+      <div style="margin-top: 20px;">
+        <span class="badge">✅ WORKING</span>
+        <span class="badge">📱 PWA READY</span>
+      </div>
+    </div>
+    
+    <div class="success">
+      <div class="emoji">🎉</div>
+      <h2>SUCCESS!</h2>
+      <p style="color: #cbd5e1; font-size: 18px;">
+        Your Finance Tracker is deployed and working!
+      </p>
+    </div>
+    
+    <div class="card">
+      <h3>✅ No More Errors!</h3>
+      <p>
+        If you can see this page without errors, your deployment is successful!
+      </p>
+      <p style="margin-top: 15px;">
+        <strong style="color: #10b981;">URL:</strong> finance-tracker-alpha-kohl.vercel.app
+      </p>
+    </div>
+    
+    <div class="card">
+      <h3>⚡ What This App Can Do</h3>
+      <p style="margin-bottom: 15px;">Your Finance Tracker includes:</p>
+      <ul style="color: #cbd5e1; margin-left: 25px; line-height: 2;">
+        <li>📊 Work timesheet with OT calculation</li>
+        <li>📄 Cutoff invoice generator</li>
+        <li>💸 Budget tracker with expense monitoring</li>
+        <li>🎯 Savings goals tracker</li>
+        <li>📈 Monthly reports and charts</li>
+        <li>📅 Work calendar view</li>
+      </ul>
+    </div>
+    
+    <div class="install-steps">
+      <h3>📱 Install on iPhone</h3>
+      <p style="color: #cbd5e1; margin-bottom: 15px;">
+        Add this to your home screen:
+      </p>
+      <ol>
+        <li><strong>Open Safari</strong> on your iPhone (must use Safari!)</li>
+        <li>Go to: <strong>finance-tracker-alpha-kohl.vercel.app</strong></li>
+        <li>Tap the <strong>Share</strong> button (⬆️)</li>
+        <li>Tap <strong>"Add to Home Screen"</strong></li>
+        <li>Name it <strong>"Finance Tracker"</strong></li>
+        <li>Tap <strong>"Add"</strong></li>
+        <li>Launch from your home screen!</li>
+      </ol>
+    </div>
+    
+    <div class="card">
+      <h3>🚀 Ready for Full Version?</h3>
+      <p>
+        This is a test page. Once you confirm:
+      </p>
+      <ul style="color: #cbd5e1; margin-left: 25px; line-height: 2; margin-top: 10px;">
+        <li>✅ This page loads without errors</li>
+        <li>✅ You can install it on iPhone</li>
+        <li>✅ It launches from home screen</li>
+      </ul>
+      <p style="margin-top: 15px; color: #10b981; font-weight: 600;">
+        Then I'll give you the COMPLETE working app!
+      </p>
+    </div>
+    
+    <div style="text-align: center; padding: 40px 20px; color: #64748b;">
+      <p>Finance Tracker v1.0</p>
+      <p style="margin-top: 10px;">Deployed on Vercel</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -327,7 +327,11 @@
           </table>
         </div>
         
-        <button class="btn-secondary" onclick="transferToSalary('work1')" style="margin-top: 15px;">
+        <div style="margin-top: 15px; padding: 12px; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; font-size: 13px; color: #cbd5e1;">
+          <strong>💡 Note:</strong> Clicking "Transfer to Salary" will move all entries to the Sahod tab and clear this table to prevent double counting in the dashboard.
+        </div>
+        
+        <button class="btn-secondary" onclick="transferToSalary('work1')" style="margin-top: 10px;">
           Transfer to Salary →
         </button>
       </div>
@@ -371,7 +375,11 @@
           </table>
         </div>
         
-        <button class="btn-secondary" onclick="transferToSalary('work2')" style="margin-top: 15px;">
+        <div style="margin-top: 15px; padding: 12px; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; font-size: 13px; color: #cbd5e1;">
+          <strong>💡 Note:</strong> Clicking "Transfer to Salary" will move all entries to the Sahod tab and clear this table to prevent double counting in the dashboard.
+        </div>
+        
+        <button class="btn-secondary" onclick="transferToSalary('work2')" style="margin-top: 10px;">
           Transfer to Salary →
         </button>
       </div>
@@ -654,6 +662,11 @@
       const dates = data.map(e => e.date).sort();
       const period = dates[0] + ' - ' + dates[dates.length - 1];
       
+      // Confirm transfer
+      if (!confirm('Transfer ₱' + total.toFixed(2) + ' to Salary?\n\n' + workName + ' work entries will be cleared after transfer to avoid double counting in dashboard.\n\nContinue?')) {
+        return;
+      }
+      
       salaries.push({
         id: Date.now(),
         amount: total.toFixed(2),
@@ -663,8 +676,17 @@
         notes: data.length + ' days transferred'
       });
       
+      // Clear work entries after transfer to avoid double counting
+      if (type === 'work1') {
+        work1 = [];
+        save('work1', work1);
+      } else {
+        work2 = [];
+        save('work2', work2);
+      }
+      
       save('salaries', salaries);
-      alert('Transferred to Salary!');
+      alert('✅ Transferred! Dashboard totals are now correct (no double counting).');
     }
     
     // Add Budget

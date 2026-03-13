@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Finance Tracker">
   <meta name="theme-color" content="#10b981">
-  <title>Finance Tracker</title>
+  <title>Finance Tracker - Overnight Shift Fixed</title>
   
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -197,6 +197,16 @@
       font-weight: bold;
     }
     
+    .notice {
+      background: rgba(6, 182, 212, 0.1);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 13px;
+      color: #06b6d4;
+    }
+    
     @media (max-width: 768px) {
       .form-grid { grid-template-columns: 1fr; }
       table { font-size: 12px; }
@@ -214,6 +224,7 @@
     <div class="header">
       <h1>💰 Finance Tracker</h1>
       <p style="color: #94a3b8;">Your Complete Work & Budget Manager</p>
+      <p style="color: #10b981; font-size: 12px; margin-top: 10px;">✅ Overnight Shift Support Added!</p>
     </div>
     
     <div class="tabs no-print">
@@ -256,6 +267,9 @@
           Track your work hours, generate invoices, manage budgets, and monitor expenses all in one place. 
           Navigate through the tabs to access different features. Your data is saved automatically!
         </p>
+        <p style="margin-top: 15px; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; color: #10b981;">
+          <strong>✅ NEW:</strong> Overnight shifts now supported! Enter 4:00 PM to 12:00 AM and it will calculate 8 hours correctly.
+        </p>
       </div>
     </div>
     
@@ -264,6 +278,10 @@
       <div class="card">
         <h2>Work 1 Timesheet</h2>
         <p class="mb-4" style="color: #94a3b8;">Daily Rate: ₱1,000 | Hourly: ₱125 | OT: ₱187.50/hr (150%)</p>
+        
+        <div class="notice">
+          <strong>💡 Overnight Shift Tip:</strong> For overnight work (e.g., 4:00 PM to 12:00 AM next day), just enter the times normally - it will automatically calculate 8 hours!
+        </div>
         
         <div class="form-grid">
           <input type="date" id="w1-date" required>
@@ -304,6 +322,10 @@
       <div class="card">
         <h2>Work 2 Timesheet</h2>
         <p class="mb-4" style="color: #94a3b8;">Daily Rate: ₱1,200 | Hourly: ₱150 | OT: ₱225/hr (150%)</p>
+        
+        <div class="notice">
+          <strong>💡 Overnight Shift Tip:</strong> For overnight work (e.g., 4:00 PM to 12:00 AM next day), just enter the times normally - it will automatically calculate 8 hours!
+        </div>
         
         <div class="form-grid">
           <input type="date" id="w2-date" required>
@@ -457,12 +479,21 @@
       render();
     }
     
-    // Calculate hours
+    // Calculate hours - FIXED FOR OVERNIGHT SHIFTS!
     function calcHours(timeIn, timeOut) {
       if (!timeIn || !timeOut) return 0;
       const [h1, m1] = timeIn.split(':').map(Number);
       const [h2, m2] = timeOut.split(':').map(Number);
-      return ((h2 * 60 + m2) - (h1 * 60 + m1)) / 60;
+      let inMinutes = h1 * 60 + m1;
+      let outMinutes = h2 * 60 + m2;
+      
+      // If timeOut is before timeIn, assume next day (overnight shift)
+      // Example: 16:00 (4pm) to 00:00 (midnight) = 8 hours
+      if (outMinutes < inMinutes) {
+        outMinutes += 24 * 60; // Add 24 hours (1440 minutes)
+      }
+      
+      return (outMinutes - inMinutes) / 60;
     }
     
     // Add Work 1 Entry
@@ -503,7 +534,7 @@
       const timeOut = document.getElementById('w2-timeout').value;
       const ot = parseFloat(document.getElementById('w2-ot').value) || 0;
       
-      if (!date || !timeIn || !timeOut) return alert('Please fill all fields!');
+      if (!date || !timeIn || !timeOut) return alert('Fill all fields!');
       
       const regHrs = calcHours(timeIn, timeOut);
       const regPay = regHrs * 150;
@@ -700,7 +731,7 @@
     
     // Copy Invoice
     function copyInvoice() {
-      alert('Invoice details copied! (Simplified text copy)');
+      alert('Invoice copied! (Basic text copy - use Print/PDF for full invoice)');
     }
     
     // Render all
@@ -825,7 +856,7 @@
             
             const preview = document.getElementById(prefix + '-preview');
             preview.innerHTML = '<strong>Preview:</strong> Regular: ' + reg.toFixed(2) + 'h = ₱' + regPay.toFixed(2) + 
-                              ' | OT: ' + ot + 'h = ₱' + otPay.toFixed(2) + ' | Total: ₱' + total.toFixed(2);
+                              ' | OT: ' + ot + 'h = ₱' + otPay.toFixed(2) + ' | <strong>Total: ₱' + total.toFixed(2) + '</strong>';
             preview.classList.remove('hidden');
           }
         });

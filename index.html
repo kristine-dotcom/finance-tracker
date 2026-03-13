@@ -2,208 +2,1299 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Complete Finance Tracker - Work Log, Invoices, Budgets, and More">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Finance Tracker">
-  <title>Finance Tracker</title>
+  <meta name="theme-color" content="#10b981">
+  <title>Finance Tracker - Complete</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Work+Sans:wght@400;600&display=swap" rel="stylesheet">
   
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Work Sans', sans-serif;
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-      color: white;
       min-height: 100vh;
-      padding: 20px;
     }
     
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
     }
     
-    .header {
-      text-align: center;
-      padding: 40px 20px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 20px;
-      margin-bottom: 30px;
+    .glass-card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
-    h1 {
-      font-size: 48px;
-      background: linear-gradient(90deg, #10b981, #06b6d4);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 10px;
+    @media print {
+      body { background: white !important; }
+      .no-print { display: none !important; }
+      #invoice-content { display: block !important; }
     }
     
-    .subtitle {
-      color: #94a3b8;
-      font-size: 18px;
+    .loading-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
     }
     
-    .success {
-      background: rgba(16, 185, 129, 0.1);
-      border: 2px solid #10b981;
-      border-radius: 16px;
-      padding: 40px;
-      text-align: center;
-      margin-bottom: 30px;
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(16, 185, 129, 0.1);
+      border-top-color: #10b981;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
     }
     
-    .success h2 {
-      color: #10b981;
-      font-size: 32px;
-      margin-bottom: 15px;
-    }
-    
-    .card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 16px;
-      padding: 30px;
-      margin-bottom: 20px;
-    }
-    
-    .card h3 {
-      color: #10b981;
-      font-size: 24px;
-      margin-bottom: 15px;
-    }
-    
-    .card p {
-      color: #cbd5e1;
-      line-height: 1.8;
-      font-size: 16px;
-    }
-    
-    .install-steps {
-      background: rgba(6, 182, 212, 0.1);
-      border: 2px solid #06b6d4;
-      border-radius: 16px;
-      padding: 30px;
-      margin-top: 20px;
-    }
-    
-    .install-steps h3 {
-      color: #06b6d4;
-      margin-bottom: 20px;
-    }
-    
-    .install-steps ol {
-      margin-left: 25px;
-    }
-    
-    .install-steps li {
-      color: #cbd5e1;
-      margin: 12px 0;
-      line-height: 1.8;
-    }
-    
-    .badge {
-      display: inline-block;
-      background: rgba(16, 185, 129, 0.2);
-      border: 1px solid #10b981;
-      color: #10b981;
-      padding: 8px 16px;
-      border-radius: 20px;
-      margin: 5px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-    
-    .emoji {
-      font-size: 48px;
-      margin-bottom: 20px;
-    }
-    
-    @media (max-width: 640px) {
-      h1 { font-size: 32px; }
-      .card { padding: 20px; }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>💰 Finance Tracker</h1>
-      <p class="subtitle">Personal Work & Budget Manager</p>
-      <div style="margin-top: 20px;">
-        <span class="badge">✅ WORKING</span>
-        <span class="badge">📱 PWA READY</span>
-      </div>
-    </div>
-    
-    <div class="success">
-      <div class="emoji">🎉</div>
-      <h2>SUCCESS!</h2>
-      <p style="color: #cbd5e1; font-size: 18px;">
-        Your Finance Tracker is deployed and working!
-      </p>
-    </div>
-    
-    <div class="card">
-      <h3>✅ No More Errors!</h3>
-      <p>
-        If you can see this page without errors, your deployment is successful!
-      </p>
-      <p style="margin-top: 15px;">
-        <strong style="color: #10b981;">URL:</strong> finance-tracker-alpha-kohl.vercel.app
-      </p>
-    </div>
-    
-    <div class="card">
-      <h3>⚡ What This App Can Do</h3>
-      <p style="margin-bottom: 15px;">Your Finance Tracker includes:</p>
-      <ul style="color: #cbd5e1; margin-left: 25px; line-height: 2;">
-        <li>📊 Work timesheet with OT calculation</li>
-        <li>📄 Cutoff invoice generator</li>
-        <li>💸 Budget tracker with expense monitoring</li>
-        <li>🎯 Savings goals tracker</li>
-        <li>📈 Monthly reports and charts</li>
-        <li>📅 Work calendar view</li>
-      </ul>
-    </div>
-    
-    <div class="install-steps">
-      <h3>📱 Install on iPhone</h3>
-      <p style="color: #cbd5e1; margin-bottom: 15px;">
-        Add this to your home screen:
-      </p>
-      <ol>
-        <li><strong>Open Safari</strong> on your iPhone (must use Safari!)</li>
-        <li>Go to: <strong>finance-tracker-alpha-kohl.vercel.app</strong></li>
-        <li>Tap the <strong>Share</strong> button (⬆️)</li>
-        <li>Tap <strong>"Add to Home Screen"</strong></li>
-        <li>Name it <strong>"Finance Tracker"</strong></li>
-        <li>Tap <strong>"Add"</strong></li>
-        <li>Launch from your home screen!</li>
-      </ol>
-    </div>
-    
-    <div class="card">
-      <h3>🚀 Ready for Full Version?</h3>
-      <p>
-        This is a test page. Once you confirm:
-      </p>
-      <ul style="color: #cbd5e1; margin-left: 25px; line-height: 2; margin-top: 10px;">
-        <li>✅ This page loads without errors</li>
-        <li>✅ You can install it on iPhone</li>
-        <li>✅ It launches from home screen</li>
-      </ul>
-      <p style="margin-top: 15px; color: #10b981; font-weight: 600;">
-        Then I'll give you the COMPLETE working app!
-      </p>
-    </div>
-    
-    <div style="text-align: center; padding: 40px 20px; color: #64748b;">
-      <p>Finance Tracker v1.0</p>
-      <p style="margin-top: 10px;">Deployed on Vercel</p>
-    </div>
+  <div class="loading-screen" id="loading-screen">
+    <div class="spinner"></div>
+    <div class="mt-4 text-emerald-400 text-lg font-semibold">Loading Finance Tracker...</div>
   </div>
+  
+  <div id="root"></div>
+  
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  
+  <!-- Recharts for charts -->
+  <script src="https://unpkg.com/recharts@2.5.0/dist/Recharts.js"></script>
+  
+  <!-- Babel Standalone for JSX -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <!-- Main App -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
+    
+    // Mock window.storage if not available
+    if (!window.storage) {
+      window.storage = {
+        get: async (key) => {
+          const value = localStorage.getItem(key);
+          return value ? { key, value, shared: false } : null;
+        },
+        set: async (key, value) => {
+          localStorage.setItem(key, value);
+          return { key, value, shared: false };
+        },
+        delete: async (key) => {
+          localStorage.removeItem(key);
+          return { key, deleted: true, shared: false };
+        },
+        list: async (prefix) => {
+          const keys = Object.keys(localStorage).filter(k => !prefix || k.startsWith(prefix));
+          return { keys, prefix, shared: false };
+        }
+      };
+    }
+    
+    const FinanceTracker = () => {
+      const [activeTab, setActiveTab] = useState('dashboard');
+      const [work1Entries, setWork1Entries] = useState([]);
+      const [work2Entries, setWork2Entries] = useState([]);
+      const [budgets, setBudgets] = useState([]);
+      const [salaries, setSalaries] = useState([]);
+      const [expenses, setExpenses] = useState([]);
+      const [savingsGoals, setSavingsGoals] = useState([]);
+      const [loading, setLoading] = useState(true);
+      
+      const [cutoffMonth, setCutoffMonth] = useState(() => {
+        const now = new Date();
+        return String(now.getFullYear()) + '-' + String(now.getMonth() + 1).padStart(2, '0');
+      });
+      const [cutoffPeriod, setCutoffPeriod] = useState('1');
+      const [invoiceData, setInvoiceData] = useState(null);
+      
+      const work1Config = {
+        name: 'Work 1',
+        dailyRate: 1000,
+        hourlyRate: 125,
+        standardHours: 8
+      };
+      
+      const work2Config = {
+        name: 'Work 2',
+        dailyRate: 1200,
+        hourlyRate: 150,
+        standardHours: 8
+      };
+      
+      const [work1Form, setWork1Form] = useState({
+        date: '', timeIn: '', timeOut: '', otHours: 0, notes: ''
+      });
+      
+      const [work2Form, setWork2Form] = useState({
+        date: '', timeIn: '', timeOut: '', otHours: 0, notes: ''
+      });
+      
+      const [budgetForm, setBudgetForm] = useState({
+        category: '', monthlyLimit: 0
+      });
+      
+      const [expenseForm, setExpenseForm] = useState({
+        amount: 0, category: '', date: '', description: ''
+      });
+      
+      const [salaryForm, setSalaryForm] = useState({
+        amount: 0, date: '', period: '', source: 'Regular', notes: ''
+      });
+      
+      const [goalForm, setGoalForm] = useState({
+        name: '', targetAmount: 0, currentAmount: 0, deadline: ''
+      });
+      
+      useEffect(() => {
+        const loadData = async () => {
+          try {
+            const [w1, w2, b, s, e, g] = await Promise.all([
+              window.storage.get('work1Entries'),
+              window.storage.get('work2Entries'),
+              window.storage.get('budgets'),
+              window.storage.get('salaries'),
+              window.storage.get('expenses'),
+              window.storage.get('savingsGoals')
+            ]);
+            
+            if (w1 && w1.value) setWork1Entries(JSON.parse(w1.value));
+            if (w2 && w2.value) setWork2Entries(JSON.parse(w2.value));
+            if (b && b.value) setBudgets(JSON.parse(b.value));
+            if (s && s.value) setSalaries(JSON.parse(s.value));
+            if (e && e.value) setExpenses(JSON.parse(e.value));
+            if (g && g.value) setSavingsGoals(JSON.parse(g.value));
+          } catch (error) {
+            console.log('Starting fresh');
+          }
+          setTimeout(() => {
+            setLoading(false);
+            document.getElementById('loading-screen').style.display = 'none';
+          }, 800);
+        };
+        loadData();
+      }, []);
+      
+      const saveData = async (type, data) => {
+        try {
+          await window.storage.set(type, JSON.stringify(data));
+        } catch (error) {
+          console.error('Save error:', error);
+        }
+      };
+      
+      const calculateHours = (timeIn, timeOut) => {
+        if (!timeIn || !timeOut) return 0;
+        const parts1 = timeIn.split(':');
+        const parts2 = timeOut.split(':');
+        const inHour = parseInt(parts1[0]);
+        const inMin = parseInt(parts1[1]);
+        const outHour = parseInt(parts2[0]);
+        const outMin = parseInt(parts2[1]);
+        const inMinutes = inHour * 60 + inMin;
+        const outMinutes = outHour * 60 + outMin;
+        return ((outMinutes - inMinutes) / 60).toFixed(2);
+      };
+      
+      const addWork1Entry = async () => {
+        if (!work1Form.date || !work1Form.timeIn || !work1Form.timeOut) return;
+        
+        const regularHours = parseFloat(calculateHours(work1Form.timeIn, work1Form.timeOut));
+        const otHours = parseFloat(work1Form.otHours) || 0;
+        const totalHours = regularHours + otHours;
+        const regularPay = regularHours * work1Config.hourlyRate;
+        const otPay = otHours * work1Config.hourlyRate * 1.5;
+        const totalPay = regularPay + otPay;
+        
+        const newEntry = {
+          ...work1Form,
+          id: Date.now(),
+          regularHours,
+          otHours,
+          totalHours,
+          regularPay,
+          otPay,
+          totalPay
+        };
+        
+        const updated = [...work1Entries, newEntry];
+        setWork1Entries(updated);
+        await saveData('work1Entries', updated);
+        setWork1Form({ date: '', timeIn: '', timeOut: '', otHours: 0, notes: '' });
+      };
+      
+      const addWork2Entry = async () => {
+        if (!work2Form.date || !work2Form.timeIn || !work2Form.timeOut) return;
+        
+        const regularHours = parseFloat(calculateHours(work2Form.timeIn, work2Form.timeOut));
+        const otHours = parseFloat(work2Form.otHours) || 0;
+        const totalHours = regularHours + otHours;
+        const regularPay = regularHours * work2Config.hourlyRate;
+        const otPay = otHours * work2Config.hourlyRate * 1.5;
+        const totalPay = regularPay + otPay;
+        
+        const newEntry = {
+          ...work2Form,
+          id: Date.now(),
+          regularHours,
+          otHours,
+          totalHours,
+          regularPay,
+          otPay,
+          totalPay
+        };
+        
+        const updated = [...work2Entries, newEntry];
+        setWork2Entries(updated);
+        await saveData('work2Entries', updated);
+        setWork2Form({ date: '', timeIn: '', timeOut: '', otHours: 0, notes: '' });
+      };
+      
+      const deleteWork1Entry = async (id) => {
+        const updated = work1Entries.filter(e => e.id !== id);
+        setWork1Entries(updated);
+        await saveData('work1Entries', updated);
+      };
+      
+      const deleteWork2Entry = async (id) => {
+        const updated = work2Entries.filter(e => e.id !== id);
+        setWork2Entries(updated);
+        await saveData('work2Entries', updated);
+      };
+      
+      const addBudget = async () => {
+        if (!budgetForm.category || !budgetForm.monthlyLimit) return;
+        const newBudget = { ...budgetForm, id: Date.now(), spent: 0 };
+        const updated = [...budgets, newBudget];
+        setBudgets(updated);
+        await saveData('budgets', updated);
+        setBudgetForm({ category: '', monthlyLimit: 0 });
+      };
+      
+      const addExpense = async () => {
+        if (!expenseForm.amount || !expenseForm.category || !expenseForm.date) return;
+        
+        const newExpense = { ...expenseForm, id: Date.now() };
+        const updated = [...expenses, newExpense];
+        setExpenses(updated);
+        await saveData('expenses', updated);
+        
+        const expenseDate = new Date(expenseForm.date);
+        const expenseMonth = String(expenseDate.getFullYear()) + '-' + String(expenseDate.getMonth() + 1).padStart(2, '0');
+        
+        const updatedBudgets = budgets.map(budget => {
+          if (budget.category === expenseForm.category) {
+            const currentMonth = String(new Date().getFullYear()) + '-' + String(new Date().getMonth() + 1).padStart(2, '0');
+            if (expenseMonth === currentMonth) {
+              return { ...budget, spent: (budget.spent || 0) + parseFloat(expenseForm.amount) };
+            }
+          }
+          return budget;
+        });
+        setBudgets(updatedBudgets);
+        await saveData('budgets', updatedBudgets);
+        
+        setExpenseForm({ amount: 0, category: '', date: '', description: '' });
+      };
+      
+      const deleteExpense = async (id) => {
+        const expense = expenses.find(e => e.id === id);
+        if (!expense) return;
+        
+        const updated = expenses.filter(e => e.id !== id);
+        setExpenses(updated);
+        await saveData('expenses', updated);
+        
+        const expenseDate = new Date(expense.date);
+        const expenseMonth = String(expenseDate.getFullYear()) + '-' + String(expenseDate.getMonth() + 1).padStart(2, '0');
+        const currentMonth = String(new Date().getFullYear()) + '-' + String(new Date().getMonth() + 1).padStart(2, '0');
+        
+        if (expenseMonth === currentMonth) {
+          const updatedBudgets = budgets.map(budget => {
+            if (budget.category === expense.category) {
+              return { ...budget, spent: Math.max(0, (budget.spent || 0) - parseFloat(expense.amount)) };
+            }
+            return budget;
+          });
+          setBudgets(updatedBudgets);
+          await saveData('budgets', updatedBudgets);
+        }
+      };
+      
+      const addSalary = async () => {
+        if (!salaryForm.amount || !salaryForm.date) return;
+        const newSalary = { ...salaryForm, id: Date.now() };
+        const updated = [...salaries, newSalary].sort((a, b) => new Date(b.date) - new Date(a.date));
+        setSalaries(updated);
+        await saveData('salaries', updated);
+        setSalaryForm({ amount: 0, date: '', period: '', source: 'Regular', notes: '' });
+      };
+      
+      const deleteSalary = async (id) => {
+        const updated = salaries.filter(s => s.id !== id);
+        setSalaries(updated);
+        await saveData('salaries', updated);
+      };
+      
+      const transferEarningsToSalary = async (workName, totalEarnings, entries) => {
+        if (entries.length === 0) return;
+        
+        const dates = entries.map(e => new Date(e.date)).sort((a, b) => a - b);
+        const startDate = dates[0].toLocaleDateString();
+        const endDate = dates[dates.length - 1].toLocaleDateString();
+        
+        const newSalary = {
+          id: Date.now(),
+          amount: totalEarnings,
+          date: entries[entries.length - 1].date,
+          period: startDate + ' - ' + endDate,
+          source: workName,
+          notes: entries.length + ' work days transferred'
+        };
+        
+        const updated = [...salaries, newSalary].sort((a, b) => new Date(b.date) - new Date(a.date));
+        setSalaries(updated);
+        await saveData('salaries', updated);
+        alert('Earnings transferred to Salary tab!');
+      };
+      
+      const addSavingsGoal = async () => {
+        if (!goalForm.name || !goalForm.targetAmount) return;
+        const newGoal = { ...goalForm, id: Date.now(), currentAmount: 0 };
+        const updated = [...savingsGoals, newGoal];
+        setSavingsGoals(updated);
+        await saveData('savingsGoals', updated);
+        setGoalForm({ name: '', targetAmount: 0, currentAmount: 0, deadline: '' });
+      };
+      
+      const updateGoalProgress = async (id, amount) => {
+        const updated = savingsGoals.map(goal =>
+          goal.id === id ? { ...goal, currentAmount: parseFloat(amount) || 0 } : goal
+        );
+        setSavingsGoals(updated);
+        await saveData('savingsGoals', updated);
+      };
+      
+      const deleteGoal = async (id) => {
+        const updated = savingsGoals.filter(g => g.id !== id);
+        setSavingsGoals(updated);
+        await saveData('savingsGoals', updated);
+      };
+      
+      const generateCutoffInvoice = () => {
+        const parts = cutoffMonth.split('-');
+        const year = parseInt(parts[0]);
+        const month = parseInt(parts[1]);
+        
+        let startDay, endDay;
+        if (cutoffPeriod === '1') {
+          startDay = 1;
+          endDay = 15;
+        } else {
+          startDay = 16;
+          const daysInMonth = new Date(year, month, 0).getDate();
+          endDay = daysInMonth;
+        }
+        
+        const startDate = new Date(year, month - 1, startDay);
+        const endDate = new Date(year, month - 1, endDay);
+        
+        const filterEntries = (entries) => {
+          return entries.filter(entry => {
+            const entryDate = new Date(entry.date);
+            return entryDate >= startDate && entryDate <= endDate;
+          });
+        };
+        
+        const filtered1 = filterEntries(work1Entries);
+        const filtered2 = filterEntries(work2Entries);
+        
+        setInvoiceData({
+          work1: filtered1,
+          work2: filtered2,
+          period: cutoffPeriod,
+          month: month,
+          year: year,
+          startDay: startDay,
+          endDay: endDay
+        });
+      };
+      
+      const downloadInvoicePDF = () => {
+        window.print();
+      };
+      
+      const copyInvoiceText = () => {
+        if (!invoiceData) return;
+        
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                           'July', 'August', 'September', 'October', 'November', 'December'];
+        const monthName = monthNames[invoiceData.month - 1];
+        
+        let text = '=== WORK INVOICE ===\\n';
+        text += 'Cutoff: ' + (invoiceData.period === '1' ? '1st' : '2nd') + ' Half of ' + monthName + ' ' + invoiceData.year + '\\n';
+        text += 'Period: ' + invoiceData.startDay + '-' + invoiceData.endDay + ' ' + monthName + ' ' + invoiceData.year + '\\n';
+        text += 'Generated: ' + new Date().toLocaleDateString() + '\\n\\n';
+        
+        text += '--- WORK 1 ---\\n';
+        invoiceData.work1.forEach(entry => {
+          text += entry.date + ' | ' + entry.timeIn + '-' + entry.timeOut + ' | ';
+          text += 'Reg: ' + entry.regularHours + 'h ₱' + entry.regularPay.toFixed(2) + ' | ';
+          text += 'OT: ' + entry.otHours + 'h ₱' + entry.otPay.toFixed(2) + ' | ';
+          text += 'Total: ₱' + entry.totalPay.toFixed(2) + '\\n';
+        });
+        const work1Total = invoiceData.work1.reduce((sum, e) => sum + e.totalPay, 0);
+        text += 'Work 1 Subtotal: ₱' + work1Total.toFixed(2) + '\\n\\n';
+        
+        text += '--- WORK 2 ---\\n';
+        invoiceData.work2.forEach(entry => {
+          text += entry.date + ' | ' + entry.timeIn + '-' + entry.timeOut + ' | ';
+          text += 'Reg: ' + entry.regularHours + 'h ₱' + entry.regularPay.toFixed(2) + ' | ';
+          text += 'OT: ' + entry.otHours + 'h ₱' + entry.otPay.toFixed(2) + ' | ';
+          text += 'Total: ₱' + entry.totalPay.toFixed(2) + '\\n';
+        });
+        const work2Total = invoiceData.work2.reduce((sum, e) => sum + e.totalPay, 0);
+        text += 'Work 2 Subtotal: ₱' + work2Total.toFixed(2) + '\\n\\n';
+        
+        text += '=== GRAND TOTAL: ₱' + (work1Total + work2Total).toFixed(2) + ' ===';
+        
+        navigator.clipboard.writeText(text);
+        alert('Invoice copied to clipboard!');
+      };
+      
+      if (loading) {
+        return <div>Loading...</div>;
+      }
+      
+      const tabs = [
+        { id: 'dashboard', label: '📊 Dashboard', icon: '📊' },
+        { id: 'timesheet', label: '⏰ Work Log', icon: '⏰' },
+        { id: 'invoice', label: '📄 Cutoff Invoice', icon: '📄' },
+        { id: 'budgets', label: '💸 Budgets', icon: '💸' },
+        { id: 'reports', label: '📈 Reports', icon: '📈' },
+        { id: 'salaries', label: '💰 Sahod', icon: '💰' }
+      ];
+      
+      return (
+        <div className="min-h-screen text-white p-4 md:p-8">
+          <div className="max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <h1 className="text-5xl font-bold mb-2" style={{
+                background: 'linear-gradient(90deg, #10b981, #06b6d4)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>
+                Finance Tracker
+              </h1>
+              <p className="text-slate-400">Your Complete Work & Budget Manager</p>
+            </div>
+            
+            {/* Tabs */}
+            <div className="flex overflow-x-auto gap-2 mb-6 pb-2">
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={'px-6 py-3 rounded-xl font-semibold transition-all whitespace-nowrap ' +
+                    (activeTab === tab.id
+                      ? 'bg-emerald-500 text-white shadow-lg'
+                      : 'glass-card text-slate-300 hover:bg-slate-700')}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            
+            {/* Dashboard Tab */}
+            {activeTab === 'dashboard' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="glass-card rounded-2xl p-6">
+                    <div className="text-3xl mb-2">📅</div>
+                    <div className="text-2xl font-bold text-emerald-400">
+                      {work1Entries.length + work2Entries.length}
+                    </div>
+                    <div className="text-slate-400 text-sm">Work Days</div>
+                  </div>
+                  
+                  <div className="glass-card rounded-2xl p-6">
+                    <div className="text-3xl mb-2">⏰</div>
+                    <div className="text-2xl font-bold text-cyan-400">
+                      {(work1Entries.reduce((sum, e) => sum + e.regularHours, 0) +
+                        work2Entries.reduce((sum, e) => sum + e.regularHours, 0)).toFixed(1)}h
+                    </div>
+                    <div className="text-slate-400 text-sm">Regular Hours</div>
+                  </div>
+                  
+                  <div className="glass-card rounded-2xl p-6">
+                    <div className="text-3xl mb-2">💰</div>
+                    <div className="text-2xl font-bold text-emerald-400">
+                      ₱{(work1Entries.reduce((sum, e) => sum + e.totalPay, 0) +
+                         work2Entries.reduce((sum, e) => sum + e.totalPay, 0) +
+                         salaries.reduce((sum, s) => sum + parseFloat(s.amount), 0)).toFixed(2)}
+                    </div>
+                    <div className="text-slate-400 text-sm">Total Earnings</div>
+                  </div>
+                  
+                  <div className="glass-card rounded-2xl p-6">
+                    <div className="text-3xl mb-2">💸</div>
+                    <div className="text-2xl font-bold text-red-400">
+                      ₱{expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0).toFixed(2)}
+                    </div>
+                    <div className="text-slate-400 text-sm">Total Expenses</div>
+                  </div>
+                </div>
+                
+                <div className="glass-card rounded-2xl p-6">
+                  <h2 className="text-2xl font-bold text-emerald-400 mb-4">Welcome to Your Finance Tracker! 🎉</h2>
+                  <p className="text-slate-300 leading-relaxed">
+                    This is your complete financial management system. Track your work hours, generate invoices, 
+                    manage budgets, and monitor your savings goals all in one place. Navigate through the tabs above 
+                    to access different features.
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            {/* Work Log Tab - Continuing in next part... */}
+            {activeTab === 'timesheet' && (
+              <div className="space-y-8">
+                {/* Work 1 Section */}
+                <div className="glass-card rounded-2xl p-6">
+                  <h2 className="text-2xl font-bold text-emerald-400 mb-4">Work 1 Timesheet</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+                    <input
+                      type="date"
+                      value={work1Form.date}
+                      onChange={(e) => setWork1Form({...work1Form, date: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                    />
+                    <input
+                      type="time"
+                      value={work1Form.timeIn}
+                      onChange={(e) => setWork1Form({...work1Form, timeIn: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="Time In"
+                    />
+                    <input
+                      type="time"
+                      value={work1Form.timeOut}
+                      onChange={(e) => setWork1Form({...work1Form, timeOut: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="Time Out"
+                    />
+                    <input
+                      type="number"
+                      value={work1Form.otHours}
+                      onChange={(e) => setWork1Form({...work1Form, otHours: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="OT Hours"
+                      step="0.5"
+                    />
+                    <button
+                      onClick={addWork1Entry}
+                      className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
+                    >
+                      + Add Entry
+                    </button>
+                  </div>
+                  
+                  {work1Form.timeIn && work1Form.timeOut && (
+                    <div className="mb-4 p-4 bg-slate-700/50 rounded-lg text-sm">
+                      <strong>Preview:</strong> Regular: {calculateHours(work1Form.timeIn, work1Form.timeOut)}h 
+                      = ₱{(parseFloat(calculateHours(work1Form.timeIn, work1Form.timeOut)) * work1Config.hourlyRate).toFixed(2)} | 
+                      OT: {work1Form.otHours}h = ₱{(parseFloat(work1Form.otHours) * work1Config.hourlyRate * 1.5).toFixed(2)} | 
+                      Total: ₱{((parseFloat(calculateHours(work1Form.timeIn, work1Form.timeOut)) * work1Config.hourlyRate) + 
+                        (parseFloat(work1Form.otHours) * work1Config.hourlyRate * 1.5)).toFixed(2)}
+                    </div>
+                  )}
+                  
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-slate-600">
+                          <th className="text-left py-2">Date</th>
+                          <th className="text-left py-2">Time In</th>
+                          <th className="text-left py-2">Time Out</th>
+                          <th className="text-right py-2">Reg Hrs</th>
+                          <th className="text-right py-2">OT Hrs</th>
+                          <th className="text-right py-2">Total Hrs</th>
+                          <th className="text-right py-2">Reg Pay</th>
+                          <th className="text-right py-2">OT Pay</th>
+                          <th className="text-right py-2">Total Pay</th>
+                          <th className="text-center py-2">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {work1Entries.map(entry => (
+                          <tr key={entry.id} className="border-b border-slate-700 hover:bg-slate-700/30">
+                            <td className="py-2">{entry.date}</td>
+                            <td className="py-2">{entry.timeIn}</td>
+                            <td className="py-2">{entry.timeOut}</td>
+                            <td className="text-right py-2">{entry.regularHours}</td>
+                            <td className="text-right py-2">{entry.otHours}</td>
+                            <td className="text-right py-2">{entry.totalHours}</td>
+                            <td className="text-right py-2">₱{entry.regularPay.toFixed(2)}</td>
+                            <td className="text-right py-2">₱{entry.otPay.toFixed(2)}</td>
+                            <td className="text-right py-2 font-bold text-emerald-400">₱{entry.totalPay.toFixed(2)}</td>
+                            <td className="text-center py-2">
+                              <button
+                                onClick={() => deleteWork1Entry(entry.id)}
+                                className="text-red-400 hover:text-red-300"
+                              >
+                                🗑️
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                        {work1Entries.length > 0 && (
+                          <tr className="font-bold bg-emerald-500/10">
+                            <td colSpan="6" className="text-right py-3">TOTAL:</td>
+                            <td className="text-right py-3">₱{work1Entries.reduce((sum, e) => sum + e.regularPay, 0).toFixed(2)}</td>
+                            <td className="text-right py-3">₱{work1Entries.reduce((sum, e) => sum + e.otPay, 0).toFixed(2)}</td>
+                            <td className="text-right py-3 text-emerald-400">₱{work1Entries.reduce((sum, e) => sum + e.totalPay, 0).toFixed(2)}</td>
+                            <td></td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  {work1Entries.length > 0 && (
+                    <button
+                      onClick={() => transferEarningsToSalary('Work 1', 
+                        work1Entries.reduce((sum, e) => sum + e.totalPay, 0), work1Entries)}
+                      className="mt-4 px-6 py-2 bg-cyan-500 hover:bg-cyan-600 rounded-lg font-semibold transition"
+                    >
+                      Transfer to Salary →
+                    </button>
+                  )}
+                </div>
+                
+                {/* Work 2 Section - Similar structure */}
+                <div className="glass-card rounded-2xl p-6">
+                  <h2 className="text-2xl font-bold text-cyan-400 mb-4">Work 2 Timesheet</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+                    <input
+                      type="date"
+                      value={work2Form.date}
+                      onChange={(e) => setWork2Form({...work2Form, date: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                    />
+                    <input
+                      type="time"
+                      value={work2Form.timeIn}
+                      onChange={(e) => setWork2Form({...work2Form, timeIn: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                    />
+                    <input
+                      type="time"
+                      value={work2Form.timeOut}
+                      onChange={(e) => setWork2Form({...work2Form, timeOut: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                    />
+                    <input
+                      type="number"
+                      value={work2Form.otHours}
+                      onChange={(e) => setWork2Form({...work2Form, otHours: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="OT Hours"
+                      step="0.5"
+                    />
+                    <button
+                      onClick={addWork2Entry}
+                      className="px-6 py-2 bg-cyan-500 hover:bg-cyan-600 rounded-lg font-semibold transition"
+                    >
+                      + Add Entry
+                    </button>
+                  </div>
+                  
+                  {work2Form.timeIn && work2Form.timeOut && (
+                    <div className="mb-4 p-4 bg-slate-700/50 rounded-lg text-sm">
+                      <strong>Preview:</strong> Regular: {calculateHours(work2Form.timeIn, work2Form.timeOut)}h 
+                      = ₱{(parseFloat(calculateHours(work2Form.timeIn, work2Form.timeOut)) * work2Config.hourlyRate).toFixed(2)} | 
+                      OT: {work2Form.otHours}h = ₱{(parseFloat(work2Form.otHours) * work2Config.hourlyRate * 1.5).toFixed(2)} | 
+                      Total: ₱{((parseFloat(calculateHours(work2Form.timeIn, work2Form.timeOut)) * work2Config.hourlyRate) + 
+                        (parseFloat(work2Form.otHours) * work2Config.hourlyRate * 1.5)).toFixed(2)}
+                    </div>
+                  )}
+                  
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b border-slate-600">
+                          <th className="text-left py-2">Date</th>
+                          <th className="text-left py-2">Time In</th>
+                          <th className="text-left py-2">Time Out</th>
+                          <th className="text-right py-2">Reg Hrs</th>
+                          <th className="text-right py-2">OT Hrs</th>
+                          <th className="text-right py-2">Total Hrs</th>
+                          <th className="text-right py-2">Reg Pay</th>
+                          <th className="text-right py-2">OT Pay</th>
+                          <th className="text-right py-2">Total Pay</th>
+                          <th className="text-center py-2">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {work2Entries.map(entry => (
+                          <tr key={entry.id} className="border-b border-slate-700 hover:bg-slate-700/30">
+                            <td className="py-2">{entry.date}</td>
+                            <td className="py-2">{entry.timeIn}</td>
+                            <td className="py-2">{entry.timeOut}</td>
+                            <td className="text-right py-2">{entry.regularHours}</td>
+                            <td className="text-right py-2">{entry.otHours}</td>
+                            <td className="text-right py-2">{entry.totalHours}</td>
+                            <td className="text-right py-2">₱{entry.regularPay.toFixed(2)}</td>
+                            <td className="text-right py-2">₱{entry.otPay.toFixed(2)}</td>
+                            <td className="text-right py-2 font-bold text-cyan-400">₱{entry.totalPay.toFixed(2)}</td>
+                            <td className="text-center py-2">
+                              <button
+                                onClick={() => deleteWork2Entry(entry.id)}
+                                className="text-red-400 hover:text-red-300"
+                              >
+                                🗑️
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                        {work2Entries.length > 0 && (
+                          <tr className="font-bold bg-cyan-500/10">
+                            <td colSpan="6" className="text-right py-3">TOTAL:</td>
+                            <td className="text-right py-3">₱{work2Entries.reduce((sum, e) => sum + e.regularPay, 0).toFixed(2)}</td>
+                            <td className="text-right py-3">₱{work2Entries.reduce((sum, e) => sum + e.otPay, 0).toFixed(2)}</td>
+                            <td className="text-right py-3 text-cyan-400">₱{work2Entries.reduce((sum, e) => sum + e.totalPay, 0).toFixed(2)}</td>
+                            <td></td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  {work2Entries.length > 0 && (
+                    <button
+                      onClick={() => transferEarningsToSalary('Work 2', 
+                        work2Entries.reduce((sum, e) => sum + e.totalPay, 0), work2Entries)}
+                      className="mt-4 px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
+                    >
+                      Transfer to Salary →
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            {/* Invoice Tab */}
+            {activeTab === 'invoice' && (
+              <div className="space-y-6">
+                <div className="glass-card rounded-2xl p-6">
+                  <h2 className="text-2xl font-bold text-emerald-400 mb-4">Generate Cutoff Invoice</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div>
+                      <label className="block text-sm mb-2">Month</label>
+                      <input
+                        type="month"
+                        value={cutoffMonth}
+                        onChange={(e) => setCutoffMonth(e.target.value)}
+                        className="w-full px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm mb-2">Cutoff Period</label>
+                      <select
+                        value={cutoffPeriod}
+                        onChange={(e) => setCutoffPeriod(e.target.value)}
+                        className="w-full px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      >
+                        <option value="1">1st Half (1-15)</option>
+                        <option value="2">2nd Half (16-End)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm mb-2">&nbsp;</label>
+                      <button
+                        onClick={generateCutoffInvoice}
+                        className="w-full px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
+                      >
+                        Generate Invoice
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                {invoiceData && (
+                  <div>
+                    <div className="glass-card rounded-2xl p-8 no-print" id="invoice-content">
+                      <div className="text-center mb-6">
+                        <h1 className="text-3xl font-bold mb-2">WORK INVOICE</h1>
+                        <p className="text-slate-400">
+                          {invoiceData.period === '1' ? '1st' : '2nd'} Half of{' '}
+                          {['January', 'February', 'March', 'April', 'May', 'June', 
+                            'July', 'August', 'September', 'October', 'November', 'December'][invoiceData.month - 1]}{' '}
+                          {invoiceData.year}
+                        </p>
+                        <p className="text-sm text-slate-500">
+                          Period: {invoiceData.startDay}-{invoiceData.endDay}{' '}
+                          {['January', 'February', 'March', 'April', 'May', 'June', 
+                            'July', 'August', 'September', 'October', 'November', 'December'][invoiceData.month - 1]}{' '}
+                          {invoiceData.year}
+                        </p>
+                        <p className="text-xs text-slate-600">Generated: {new Date().toLocaleDateString()}</p>
+                      </div>
+                      
+                      <div className="mb-8">
+                        <h3 className="text-xl font-bold text-emerald-400 mb-4">Work 1</h3>
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-slate-600">
+                              <th className="text-left py-2">Date</th>
+                              <th className="text-left py-2">Hours</th>
+                              <th className="text-left py-2">Time</th>
+                              <th className="text-right py-2">Regular Pay</th>
+                              <th className="text-right py-2">OT Pay</th>
+                              <th className="text-right py-2">Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {invoiceData.work1.map(entry => (
+                              <tr key={entry.id} className="border-b border-slate-700">
+                                <td className="py-2">{entry.date}</td>
+                                <td className="py-2">{entry.regularHours}h + {entry.otHours}h OT</td>
+                                <td className="py-2">{entry.timeIn}-{entry.timeOut}</td>
+                                <td className="text-right py-2">₱{entry.regularPay.toFixed(2)}</td>
+                                <td className="text-right py-2">₱{entry.otPay.toFixed(2)}</td>
+                                <td className="text-right py-2 font-bold">₱{entry.totalPay.toFixed(2)}</td>
+                              </tr>
+                            ))}
+                            <tr className="font-bold bg-emerald-500/10">
+                              <td colSpan="5" className="text-right py-3">Work 1 Subtotal:</td>
+                              <td className="text-right py-3 text-emerald-400">
+                                ₱{invoiceData.work1.reduce((sum, e) => sum + e.totalPay, 0).toFixed(2)}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      <div className="mb-8">
+                        <h3 className="text-xl font-bold text-cyan-400 mb-4">Work 2</h3>
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-slate-600">
+                              <th className="text-left py-2">Date</th>
+                              <th className="text-left py-2">Hours</th>
+                              <th className="text-left py-2">Time</th>
+                              <th className="text-right py-2">Regular Pay</th>
+                              <th className="text-right py-2">OT Pay</th>
+                              <th className="text-right py-2">Total</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {invoiceData.work2.map(entry => (
+                              <tr key={entry.id} className="border-b border-slate-700">
+                                <td className="py-2">{entry.date}</td>
+                                <td className="py-2">{entry.regularHours}h + {entry.otHours}h OT</td>
+                                <td className="py-2">{entry.timeIn}-{entry.timeOut}</td>
+                                <td className="text-right py-2">₱{entry.regularPay.toFixed(2)}</td>
+                                <td className="text-right py-2">₱{entry.otPay.toFixed(2)}</td>
+                                <td className="text-right py-2 font-bold">₱{entry.totalPay.toFixed(2)}</td>
+                              </tr>
+                            ))}
+                            <tr className="font-bold bg-cyan-500/10">
+                              <td colSpan="5" className="text-right py-3">Work 2 Subtotal:</td>
+                              <td className="text-right py-3 text-cyan-400">
+                                ₱{invoiceData.work2.reduce((sum, e) => sum + e.totalPay, 0).toFixed(2)}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      <div className="border-t-2 border-emerald-500 pt-4">
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-emerald-400">
+                            GRAND TOTAL: ₱{(invoiceData.work1.reduce((sum, e) => sum + e.totalPay, 0) + 
+                              invoiceData.work2.reduce((sum, e) => sum + e.totalPay, 0)).toFixed(2)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-4 mt-4 no-print">
+                      <button
+                        onClick={copyInvoiceText}
+                        className="px-6 py-3 bg-cyan-500 hover:bg-cyan-600 rounded-lg font-semibold transition"
+                      >
+                        📋 Copy Invoice Text
+                      </button>
+                      <button
+                        onClick={downloadInvoicePDF}
+                        className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
+                      >
+                        📥 Download as PDF
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Budgets Tab */}
+            {activeTab === 'budgets' && (
+              <div className="space-y-6">
+                <div className="glass-card rounded-2xl p-6">
+                  <h2 className="text-2xl font-bold text-emerald-400 mb-4">Add Budget Category</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input
+                      type="text"
+                      value={budgetForm.category}
+                      onChange={(e) => setBudgetForm({...budgetForm, category: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="Category (e.g., Food)"
+                    />
+                    <input
+                      type="number"
+                      value={budgetForm.monthlyLimit}
+                      onChange={(e) => setBudgetForm({...budgetForm, monthlyLimit: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="Monthly Limit"
+                    />
+                    <button
+                      onClick={addBudget}
+                      className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
+                    >
+                      + Add Budget
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="glass-card rounded-2xl p-6">
+                  <h2 className="text-2xl font-bold text-red-400 mb-4">Add Expense</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <input
+                      type="number"
+                      value={expenseForm.amount}
+                      onChange={(e) => setExpenseForm({...expenseForm, amount: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="Amount"
+                    />
+                    <select
+                      value={expenseForm.category}
+                      onChange={(e) => setExpenseForm({...expenseForm, category: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                    >
+                      <option value="">Select Category</option>
+                      {budgets.map(b => (
+                        <option key={b.id} value={b.category}>{b.category}</option>
+                      ))}
+                    </select>
+                    <input
+                      type="date"
+                      value={expenseForm.date}
+                      onChange={(e) => setExpenseForm({...expenseForm, date: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                    />
+                    <input
+                      type="text"
+                      value={expenseForm.description}
+                      onChange={(e) => setExpenseForm({...expenseForm, description: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="Description"
+                    />
+                    <button
+                      onClick={addExpense}
+                      className="px-6 py-2 bg-red-500 hover:bg-red-600 rounded-lg font-semibold transition"
+                    >
+                      + Add Expense
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {budgets.map(budget => {
+                    const percentage = (budget.spent / budget.monthlyLimit) * 100;
+                    const isWarning = percentage >= 80 && percentage < 100;
+                    const isOver = percentage >= 100;
+                    
+                    return (
+                      <div key={budget.id} className="glass-card rounded-2xl p-6">
+                        <div className="flex justify-between items-start mb-3">
+                          <h3 className="text-xl font-bold">{budget.category}</h3>
+                          {isWarning && <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">⚠️ 80% Used</span>}
+                          {isOver && <span className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded animate-pulse">OVER BUDGET!</span>}
+                        </div>
+                        <div className="text-sm text-slate-400 mb-2">
+                          ₱{(budget.spent || 0).toFixed(2)} / ₱{budget.monthlyLimit}
+                        </div>
+                        <div className="w-full bg-slate-700 rounded-full h-3 mb-2">
+                          <div
+                            className={'h-3 rounded-full transition-all ' + 
+                              (isOver ? 'bg-red-500' : isWarning ? 'bg-yellow-500' : 'bg-emerald-500')}
+                            style={{width: Math.min(percentage, 100) + '%'}}
+                          ></div>
+                        </div>
+                        <div className="text-xs text-slate-500">{percentage.toFixed(1)}% used</div>
+                      </div>
+                    );
+                  })}
+                </div>
+                
+                <div className="glass-card rounded-2xl p-6">
+                  <h2 className="text-2xl font-bold text-slate-300 mb-4">Recent Expenses</h2>
+                  <div className="space-y-2">
+                    {expenses.slice(0, 10).map(expense => (
+                      <div key={expense.id} className="flex justify-between items-center p-3 bg-slate-700/30 rounded-lg">
+                        <div>
+                          <div className="font-semibold">{expense.description}</div>
+                          <div className="text-sm text-slate-400">{expense.category} • {expense.date}</div>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <div className="text-red-400 font-bold">-₱{parseFloat(expense.amount).toFixed(2)}</div>
+                          <button
+                            onClick={() => deleteExpense(expense.id)}
+                            className="text-red-400 hover:text-red-300"
+                          >
+                            🗑️
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Salary Tab */}
+            {activeTab === 'salaries' && (
+              <div className="space-y-6">
+                <div className="glass-card rounded-2xl p-6">
+                  <h2 className="text-2xl font-bold text-emerald-400 mb-4">Add Salary/Income</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+                    <input
+                      type="number"
+                      value={salaryForm.amount}
+                      onChange={(e) => setSalaryForm({...salaryForm, amount: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="Amount"
+                    />
+                    <input
+                      type="date"
+                      value={salaryForm.date}
+                      onChange={(e) => setSalaryForm({...salaryForm, date: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                    />
+                    <input
+                      type="text"
+                      value={salaryForm.period}
+                      onChange={(e) => setSalaryForm({...salaryForm, period: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="Period (optional)"
+                    />
+                    <select
+                      value={salaryForm.source}
+                      onChange={(e) => setSalaryForm({...salaryForm, source: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                    >
+                      <option value="Regular">Regular</option>
+                      <option value="Bonus">Bonus</option>
+                      <option value="OT">OT</option>
+                      <option value="Commission">Commission</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    <input
+                      type="text"
+                      value={salaryForm.notes}
+                      onChange={(e) => setSalaryForm({...salaryForm, notes: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="Notes"
+                    />
+                    <button
+                      onClick={addSalary}
+                      className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
+                    >
+                      + Add
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="glass-card rounded-2xl p-6">
+                  <h2 className="text-2xl font-bold text-slate-300 mb-4">Salary Records</h2>
+                  <div className="space-y-3">
+                    {salaries.map(salary => (
+                      <div key={salary.id} className="flex justify-between items-center p-4 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
+                        <div>
+                          <div className="font-bold text-lg">₱{parseFloat(salary.amount).toFixed(2)}</div>
+                          <div className="text-sm text-slate-400">
+                            {salary.date} • {salary.source}
+                            {salary.period && <span> • {salary.period}</span>}
+                          </div>
+                          {salary.notes && <div className="text-xs text-slate-500 mt-1">{salary.notes}</div>}
+                        </div>
+                        <button
+                          onClick={() => deleteSalary(salary.id)}
+                          className="text-red-400 hover:text-red-300"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Reports Tab */}
+            {activeTab === 'reports' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="glass-card rounded-2xl p-6">
+                    <h3 className="text-lg font-semibold mb-2">Total Earnings</h3>
+                    <div className="text-3xl font-bold text-emerald-400">
+                      ₱{(work1Entries.reduce((sum, e) => sum + e.totalPay, 0) +
+                         work2Entries.reduce((sum, e) => sum + e.totalPay, 0) +
+                         salaries.reduce((sum, s) => sum + parseFloat(s.amount), 0)).toFixed(2)}
+                    </div>
+                    <div className="text-sm text-slate-400 mt-1">This month</div>
+                  </div>
+                  
+                  <div className="glass-card rounded-2xl p-6">
+                    <h3 className="text-lg font-semibold mb-2">Total Expenses</h3>
+                    <div className="text-3xl font-bold text-red-400">
+                      ₱{expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0).toFixed(2)}
+                    </div>
+                    <div className="text-sm text-slate-400 mt-1">This month</div>
+                  </div>
+                  
+                  <div className="glass-card rounded-2xl p-6">
+                    <h3 className="text-lg font-semibold mb-2">Net Savings</h3>
+                    <div className="text-3xl font-bold text-cyan-400">
+                      ₱{((work1Entries.reduce((sum, e) => sum + e.totalPay, 0) +
+                         work2Entries.reduce((sum, e) => sum + e.totalPay, 0) +
+                         salaries.reduce((sum, s) => sum + parseFloat(s.amount), 0)) -
+                         expenses.reduce((sum, e) => sum + parseFloat(e.amount), 0)).toFixed(2)}
+                    </div>
+                    <div className="text-sm text-slate-400 mt-1">Earnings - Expenses</div>
+                  </div>
+                </div>
+                
+                <div className="glass-card rounded-2xl p-6">
+                  <h2 className="text-2xl font-bold text-emerald-400 mb-4">Savings Goals</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <input
+                      type="text"
+                      value={goalForm.name}
+                      onChange={(e) => setGoalForm({...goalForm, name: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="Goal Name"
+                    />
+                    <input
+                      type="number"
+                      value={goalForm.targetAmount}
+                      onChange={(e) => setGoalForm({...goalForm, targetAmount: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                      placeholder="Target Amount"
+                    />
+                    <input
+                      type="date"
+                      value={goalForm.deadline}
+                      onChange={(e) => setGoalForm({...goalForm, deadline: e.target.value})}
+                      className="px-4 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white"
+                    />
+                    <button
+                      onClick={addSavingsGoal}
+                      className="px-6 py-2 bg-emerald-500 hover:bg-emerald-600 rounded-lg font-semibold transition"
+                    >
+                      + Add Goal
+                    </button>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    {savingsGoals.map(goal => {
+                      const percentage = (goal.currentAmount / goal.targetAmount) * 100;
+                      const isComplete = percentage >= 100;
+                      
+                      return (
+                        <div key={goal.id} className="p-4 bg-slate-700/30 rounded-lg">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <h3 className="font-bold text-lg">{goal.name}</h3>
+                              {goal.deadline && (
+                                <div className="text-sm text-slate-400">Deadline: {goal.deadline}</div>
+                              )}
+                            </div>
+                            <button
+                              onClick={() => deleteGoal(goal.id)}
+                              className="text-red-400 hover:text-red-300"
+                            >
+                              🗑️
+                            </button>
+                          </div>
+                          
+                          <div className="flex gap-2 items-center mb-2">
+                            <input
+                              type="number"
+                              value={goal.currentAmount}
+                              onChange={(e) => updateGoalProgress(goal.id, e.target.value)}
+                              className="flex-1 px-3 py-2 rounded-lg bg-slate-700 border border-slate-600 text-white text-sm"
+                              placeholder="Current amount"
+                            />
+                            <span className="text-slate-400">/ ₱{goal.targetAmount}</span>
+                          </div>
+                          
+                          <div className="w-full bg-slate-700 rounded-full h-4 mb-2">
+                            <div
+                              className={'h-4 rounded-full transition-all ' + 
+                                (isComplete ? 'bg-emerald-500' : 'bg-cyan-500')}
+                              style={{width: Math.min(percentage, 100) + '%'}}
+                            ></div>
+                          </div>
+                          
+                          <div className="flex justify-between text-sm">
+                            <span className={isComplete ? 'text-emerald-400 font-bold' : 'text-slate-400'}>
+                              {percentage.toFixed(1)}% {isComplete && '🎉 Goal Achieved!'}
+                            </span>
+                            <span className="text-slate-500">
+                              ₱{(goal.targetAmount - goal.currentAmount).toFixed(2)} remaining
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+    
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<FinanceTracker />);
+  </script>
 </body>
 </html>

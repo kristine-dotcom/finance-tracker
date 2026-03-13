@@ -238,51 +238,37 @@
     
     <!-- Dashboard Tab -->
     <div id="tab-dashboard" class="tab-content">
-      <div class="card" style="margin-bottom: 20px;">
-        <h2>📊 Dashboard - Current Cutoff</h2>
-        <div class="form-grid" style="grid-template-columns: 1fr 1fr auto;">
-          <select id="dash-month">
-            <!-- Populated by JS -->
-          </select>
-          <select id="dash-period">
-            <option value="1">1st Half (1-15)</option>
-            <option value="2">2nd Half (16-End)</option>
-          </select>
-          <button onclick="updateDashboard()" class="btn-secondary">Update</button>
-        </div>
-      </div>
-      
       <div class="stat-grid">
         <div class="stat-card">
           <div style="font-size: 32px;">📅</div>
           <div class="stat-value" id="stat-days">0</div>
-          <div class="stat-label">Work Days (This Cutoff)</div>
+          <div class="stat-label">Work Days</div>
         </div>
         <div class="stat-card">
           <div style="font-size: 32px;">⏰</div>
           <div class="stat-value" id="stat-hours">0h</div>
-          <div class="stat-label">Total Hours (This Cutoff)</div>
+          <div class="stat-label">Total Hours</div>
         </div>
         <div class="stat-card">
           <div style="font-size: 32px;">💰</div>
           <div class="stat-value" id="stat-earnings">₱0</div>
-          <div class="stat-label">Earnings (All Time)</div>
+          <div class="stat-label">Total Earnings</div>
         </div>
         <div class="stat-card">
           <div style="font-size: 32px;">💸</div>
           <div class="stat-value" id="stat-expenses">₱0</div>
-          <div class="stat-label">Expenses (All Time)</div>
+          <div class="stat-label">Total Expenses</div>
         </div>
       </div>
       
       <div class="card">
         <h2>Welcome! 🎉</h2>
         <p style="line-height: 1.8; color: #cbd5e1;">
-          Track your work hours per cutoff, generate invoices, manage budgets, and monitor expenses. 
-          Select cutoff period above to see hours and days for that specific period!
+          Track your work hours, generate invoices, manage budgets, and monitor expenses. 
+          All your data is saved automatically and available for invoice generation anytime!
         </p>
         <p style="margin-top: 15px; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; color: #10b981;">
-          <strong>✅ HOW IT WORKS:</strong> Add work entries → Transfer to Salary → Entries move to 📦 Transferred section → Generate invoices from ALL entries (active + transferred) anytime!
+          <strong>✅ HOW IT WORKS:</strong> Add work entries → Transfer to Salary → Entries marked with ✅ → Generate invoices from ALL entries anytime!
         </p>
       </div>
       
@@ -342,15 +328,15 @@
         </div>
         
         <!-- Module Work Section -->
-        <div style="margin-top: 30px; padding: 20px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px;">
-          <h2 style="color: #f59e0b; margin-bottom: 5px; font-size: 24px;">📚 Module Work</h2>
+        <div style="margin-top: 30px; padding: 20px; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 12px;">
+          <h2 style="color: #06b6d4; margin-bottom: 5px; font-size: 24px;">📚 Module Work</h2>
           <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Rate: ₱187.50/hr (OT rate)</p>
           
           <div class="form-grid">
             <input type="date" id="w1-mod-date" required>
             <input type="number" id="w1-mod-hours" placeholder="Hours" step="0.5" min="0">
             <input type="text" id="w1-mod-notes" placeholder="Notes (optional)">
-            <button onclick="addWork1Module()" style="background: #f59e0b; border-color: #f59e0b;">+ Add Module</button>
+            <button onclick="addWork1Module()" style="background: #06b6d4; border-color: #06b6d4;">+ Add Module</button>
           </div>
           
           <div class="overflow-auto" style="margin-top: 15px;">
@@ -371,7 +357,7 @@
         </div>
         
         <div style="margin-top: 15px; padding: 12px; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; font-size: 13px; color: #cbd5e1;">
-          <strong>💡 Note:</strong> Clicking "Transfer to Salary" will mark entries as transferred and move them to the 📦 Transferred section below. You can still generate invoices from all entries (active + transferred).
+          <strong>💡 Note:</strong> Click "Transfer to Salary" to mark entries as transferred ✅. All entries stay visible here and can be used for invoice generation. Dashboard counts only non-transferred entries.
         </div>
         
         <button class="btn-secondary" onclick="transferToSalary('work1')" style="margin-top: 10px;">
@@ -419,15 +405,15 @@
         </div>
         
         <!-- Module Work Section -->
-        <div style="margin-top: 30px; padding: 20px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px;">
-          <h3 style="color: #f59e0b; margin-bottom: 10px;">📚 Module Work</h3>
+        <div style="margin-top: 30px; padding: 20px; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 12px;">
+          <h3 style="color: #06b6d4; margin-bottom: 10px;">📚 Module Work</h3>
           <p style="font-size: 13px; color: #cbd5e1; margin-bottom: 15px;">Rate: ₱225/hr (OT rate)</p>
           
           <div class="form-grid">
             <input type="date" id="w2-mod-date" required>
             <input type="number" id="w2-mod-hours" placeholder="Hours" step="0.5" min="0">
             <input type="text" id="w2-mod-notes" placeholder="Notes (optional)">
-            <button onclick="addWork2Module()" style="background: #f59e0b; border-color: #f59e0b;">+ Add Module</button>
+            <button onclick="addWork2Module()" style="background: #06b6d4; border-color: #06b6d4;">+ Add Module</button>
           </div>
           
           <div class="overflow-auto" style="margin-top: 15px;">
@@ -448,7 +434,7 @@
         </div>
         
         <div style="margin-top: 15px; padding: 12px; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; font-size: 13px; color: #cbd5e1;">
-          <strong>💡 Note:</strong> Clicking "Transfer to Salary" will mark entries as transferred and move them to the 📦 Transferred section below. You can still generate invoices from all entries (active + transferred).
+          <strong>💡 Note:</strong> Click "Transfer to Salary" to mark entries as transferred ✅. All entries stay visible here and can be used for invoice generation. Dashboard counts only non-transferred entries.
         </div>
         
         <button class="btn-secondary" onclick="transferToSalary('work2')" style="margin-top: 10px;">
@@ -996,7 +982,7 @@
         
         // Module work
         if (filtered1Modules.length > 0) {
-          html += '<h4 style="color: #f59e0b; font-size: 14px; margin-bottom: 10px;">📚 Module Work</h4>';
+          html += '<h4 style="color: #06b6d4; font-size: 14px; margin-bottom: 10px;">📚 Module Work</h4>';
           html += '<table><thead><tr><th>Date</th><th class="text-right">Hours</th><th class="text-right">Rate</th><th class="text-right">Pay</th></tr></thead><tbody>';
           filtered1Modules.forEach(e => {
             html += '<tr><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
@@ -1030,7 +1016,7 @@
         
         // Module work
         if (filtered2Modules.length > 0) {
-          html += '<h4 style="color: #f59e0b; font-size: 14px; margin-bottom: 10px;">📚 Module Work</h4>';
+          html += '<h4 style="color: #06b6d4; font-size: 14px; margin-bottom: 10px;">📚 Module Work</h4>';
           html += '<table><thead><tr><th>Date</th><th class="text-right">Hours</th><th class="text-right">Rate</th><th class="text-right">Pay</th></tr></thead><tbody>';
           filtered2Modules.forEach(e => {
             html += '<tr><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
@@ -1055,181 +1041,148 @@
       alert('Invoice copied! (Basic text copy - use Print/PDF for full invoice)');
     }
     
-    // Update dashboard with selected cutoff
-    function updateDashboard() {
-      render();
-    }
-    
     // Render all
     function render() {
-      // Dashboard stats - per cutoff period (only non-transferred entries)
-      const dashMonth = document.getElementById('dash-month').value;
-      const dashPeriod = document.getElementById('dash-period').value;
-      
-      let cutoffDays = 0;
-      let cutoffHours = 0;
-      
-      if (dashMonth) {
-        const [year, monthNum] = dashMonth.split('-').map(Number);
-        const startDay = dashPeriod === '1' ? 1 : 16;
-        const endDay = dashPeriod === '1' ? 15 : new Date(year, monthNum, 0).getDate();
-        
-        const startDate = new Date(year, monthNum - 1, startDay);
-        const endDate = new Date(year, monthNum - 1, endDay);
-        
-        // Count only non-transferred work entries in cutoff period
-        const w1InCutoff = work1.filter(e => {
-          const d = new Date(e.date);
-          return d >= startDate && d <= endDate && !e.transferred;
-        });
-        
-        const w2InCutoff = work2.filter(e => {
-          const d = new Date(e.date);
-          return d >= startDate && d <= endDate && !e.transferred;
-        });
-        
-        cutoffDays = w1InCutoff.length + w2InCutoff.length;
-        cutoffHours = w1InCutoff.reduce((s, e) => s + parseFloat(e.regHrs || 0), 0) + 
-                      w2InCutoff.reduce((s, e) => s + parseFloat(e.regHrs || 0), 0);
-      }
-      
-      // Earnings and expenses are all-time
+      // Dashboard stats - all time
+      const totalDays = work1.filter(e => !e.transferred).length + work2.filter(e => !e.transferred).length;
+      const totalHrs = work1.filter(e => !e.transferred).reduce((s, e) => s + parseFloat(e.regHrs || 0), 0) + 
+                       work2.filter(e => !e.transferred).reduce((s, e) => s + parseFloat(e.regHrs || 0), 0);
       const totalEarn = salaries.reduce((s, e) => s + parseFloat(e.amount), 0);
       const totalExp = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
       
-      document.getElementById('stat-days').textContent = cutoffDays;
-      document.getElementById('stat-hours').textContent = cutoffHours.toFixed(1) + 'h';
+      document.getElementById('stat-days').textContent = totalDays;
+      document.getElementById('stat-hours').textContent = totalHrs.toFixed(1) + 'h';
       document.getElementById('stat-earnings').textContent = '₱' + totalEarn.toFixed(2);
       document.getElementById('stat-expenses').textContent = '₱' + totalExp.toFixed(2);
       
-      // Work 1 table - Active entries only
+      // Work 1 table - All entries with transferred indicator
       let w1Html = '';
       let w1Tot = 0;
-      const w1Active = work1.filter(e => !e.transferred);
-      const w1Transferred = work1.filter(e => e.transferred);
+      let w1ActiveTot = 0;
       
-      w1Active.forEach(e => {
-        w1Html += '<tr><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
+      work1.forEach(e => {
+        const isTransferred = e.transferred;
+        w1Html += '<tr' + (isTransferred ? ' style="background: rgba(16, 185, 129, 0.05);"' : '') + '>';
+        w1Html += '<td>' + e.date + (isTransferred ? ' <span style="color: #10b981;">✅</span>' : '') + '</td>';
+        w1Html += '<td>' + e.timeIn + '-' + e.timeOut + '</td>';
         w1Html += '<td class="text-right">' + e.regHrs + '</td><td class="text-right">' + e.ot + '</td>';
         w1Html += '<td class="text-right">₱' + e.regPay + '</td><td class="text-right">₱' + e.otPay + '</td>';
         w1Html += '<td class="text-right">₱' + e.total + '</td>';
-        w1Html += '<td class="text-center"><button class="btn-danger" onclick="deleteWork(1,' + e.id + ')">🗑️</button></td></tr>';
+        w1Html += '<td class="text-center">';
+        if (isTransferred) {
+          w1Html += '<span style="color: #10b981; font-size: 12px;">Transferred</span>';
+        } else {
+          w1Html += '<button class="btn-danger" onclick="deleteWork(1,' + e.id + ')">🗑️</button>';
+        }
+        w1Html += '</td></tr>';
         w1Tot += parseFloat(e.total);
+        if (!isTransferred) w1ActiveTot += parseFloat(e.total);
       });
-      if (w1Active.length > 0) {
-        w1Html += '<tr class="total-row"><td colspan="6" class="text-right">ACTIVE TOTAL:</td>';
-        w1Html += '<td class="text-right">₱' + w1Tot.toFixed(2) + '</td><td></td></tr>';
-      }
       
-      // Add transferred entries (greyed out)
-      if (w1Transferred.length > 0) {
-        w1Html += '<tr style="background: rgba(100,116,139,0.1);"><td colspan="8" style="padding: 8px; font-weight: 600; color: #64748b;">📦 Transferred (' + w1Transferred.length + ')</td></tr>';
-        w1Transferred.forEach(e => {
-          w1Html += '<tr style="opacity: 0.5; background: rgba(100,116,139,0.05);"><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
-          w1Html += '<td class="text-right">' + e.regHrs + '</td><td class="text-right">' + e.ot + '</td>';
-          w1Html += '<td class="text-right">₱' + e.regPay + '</td><td class="text-right">₱' + e.otPay + '</td>';
-          w1Html += '<td class="text-right">₱' + e.total + '</td>';
-          w1Html += '<td class="text-center">✅</td></tr>';
-        });
+      if (work1.length > 0) {
+        w1Html += '<tr class="total-row"><td colspan="6" class="text-right">ACTIVE TOTAL:</td>';
+        w1Html += '<td class="text-right">₱' + w1ActiveTot.toFixed(2) + '</td><td></td></tr>';
+        w1Html += '<tr class="total-row"><td colspan="6" class="text-right">ALL TOTAL:</td>';
+        w1Html += '<td class="text-right">₱' + w1Tot.toFixed(2) + '</td><td></td></tr>';
       }
       
       document.getElementById('w1-table').innerHTML = w1Html;
       
-      // Work 2 table - Active entries only
+      // Work 2 table - All entries with transferred indicator
       let w2Html = '';
       let w2Tot = 0;
-      const w2Active = work2.filter(e => !e.transferred);
-      const w2Transferred = work2.filter(e => e.transferred);
+      let w2ActiveTot = 0;
       
-      w2Active.forEach(e => {
-        w2Html += '<tr><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
+      work2.forEach(e => {
+        const isTransferred = e.transferred;
+        w2Html += '<tr' + (isTransferred ? ' style="background: rgba(16, 185, 129, 0.05);"' : '') + '>';
+        w2Html += '<td>' + e.date + (isTransferred ? ' <span style="color: #10b981;">✅</span>' : '') + '</td>';
+        w2Html += '<td>' + e.timeIn + '-' + e.timeOut + '</td>';
         w2Html += '<td class="text-right">' + e.regHrs + '</td><td class="text-right">' + e.ot + '</td>';
         w2Html += '<td class="text-right">₱' + e.regPay + '</td><td class="text-right">₱' + e.otPay + '</td>';
         w2Html += '<td class="text-right">₱' + e.total + '</td>';
-        w2Html += '<td class="text-center"><button class="btn-danger" onclick="deleteWork(2,' + e.id + ')">🗑️</button></td></tr>';
+        w2Html += '<td class="text-center">';
+        if (isTransferred) {
+          w2Html += '<span style="color: #10b981; font-size: 12px;">Transferred</span>';
+        } else {
+          w2Html += '<button class="btn-danger" onclick="deleteWork(2,' + e.id + ')">🗑️</button>';
+        }
+        w2Html += '</td></tr>';
         w2Tot += parseFloat(e.total);
+        if (!isTransferred) w2ActiveTot += parseFloat(e.total);
       });
-      if (w2Active.length > 0) {
-        w2Html += '<tr class="total-row"><td colspan="6" class="text-right">ACTIVE TOTAL:</td>';
-        w2Html += '<td class="text-right">₱' + w2Tot.toFixed(2) + '</td><td></td></tr>';
-      }
       
-      // Add transferred entries (greyed out)
-      if (w2Transferred.length > 0) {
-        w2Html += '<tr style="background: rgba(100,116,139,0.1);"><td colspan="8" style="padding: 8px; font-weight: 600; color: #64748b;">📦 Transferred (' + w2Transferred.length + ')</td></tr>';
-        w2Transferred.forEach(e => {
-          w2Html += '<tr style="opacity: 0.5; background: rgba(100,116,139,0.05);"><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
-          w2Html += '<td class="text-right">' + e.regHrs + '</td><td class="text-right">' + e.ot + '</td>';
-          w2Html += '<td class="text-right">₱' + e.regPay + '</td><td class="text-right">₱' + e.otPay + '</td>';
-          w2Html += '<td class="text-right">₱' + e.total + '</td>';
-          w2Html += '<td class="text-center">✅</td></tr>';
-        });
+      if (work2.length > 0) {
+        w2Html += '<tr class="total-row"><td colspan="6" class="text-right">ACTIVE TOTAL:</td>';
+        w2Html += '<td class="text-right">₱' + w2ActiveTot.toFixed(2) + '</td><td></td></tr>';
+        w2Html += '<tr class="total-row"><td colspan="6" class="text-right">ALL TOTAL:</td>';
+        w2Html += '<td class="text-right">₱' + w2Tot.toFixed(2) + '</td><td></td></tr>';
       }
       
       document.getElementById('w2-table').innerHTML = w2Html;
       
-      // Work 1 Module table - Active entries only
+      // Work 1 Module table - All entries with transferred indicator
       let w1ModHtml = '';
       let w1ModTot = 0;
-      const w1ModActive = work1Modules.filter(e => !e.transferred);
-      const w1ModTransferred = work1Modules.filter(e => e.transferred);
+      let w1ModActiveTot = 0;
       
-      w1ModActive.forEach(e => {
-        w1ModHtml += '<tr><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
+      work1Modules.forEach(e => {
+        const isTransferred = e.transferred;
+        w1ModHtml += '<tr' + (isTransferred ? ' style="background: rgba(16, 185, 129, 0.05);"' : '') + '>';
+        w1ModHtml += '<td>' + e.date + (isTransferred ? ' <span style="color: #10b981;">✅</span>' : '') + '</td>';
+        w1ModHtml += '<td class="text-right">' + e.hours + 'h</td>';
         w1ModHtml += '<td class="text-right">₱' + e.rate + '</td>';
         w1ModHtml += '<td class="text-right">₱' + e.pay + '</td>';
         w1ModHtml += '<td>' + (e.notes || '-') + '</td>';
-        w1ModHtml += '<td class="text-center"><button class="btn-danger" onclick="deleteWork1Module(' + e.id + ')">🗑️</button></td></tr>';
+        w1ModHtml += '<td class="text-center">';
+        if (isTransferred) {
+          w1ModHtml += '<span style="color: #10b981; font-size: 12px;">Transferred</span>';
+        } else {
+          w1ModHtml += '<button class="btn-danger" onclick="deleteWork1Module(' + e.id + ')">🗑️</button>';
+        }
+        w1ModHtml += '</td></tr>';
         w1ModTot += parseFloat(e.pay);
+        if (!isTransferred) w1ModActiveTot += parseFloat(e.pay);
       });
-      if (w1ModActive.length > 0) {
-        w1ModHtml += '<tr class="total-row"><td colspan="3" class="text-right">ACTIVE TOTAL:</td>';
-        w1ModHtml += '<td class="text-right">₱' + w1ModTot.toFixed(2) + '</td><td colspan="2"></td></tr>';
-      }
       
-      // Add transferred module entries
-      if (w1ModTransferred.length > 0) {
-        w1ModHtml += '<tr style="background: rgba(100,116,139,0.1);"><td colspan="6" style="padding: 8px; font-weight: 600; color: #64748b;">📦 Transferred (' + w1ModTransferred.length + ')</td></tr>';
-        w1ModTransferred.forEach(e => {
-          w1ModHtml += '<tr style="opacity: 0.5; background: rgba(100,116,139,0.05);"><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
-          w1ModHtml += '<td class="text-right">₱' + e.rate + '</td>';
-          w1ModHtml += '<td class="text-right">₱' + e.pay + '</td>';
-          w1ModHtml += '<td>' + (e.notes || '-') + '</td>';
-          w1ModHtml += '<td class="text-center">✅</td></tr>';
-        });
+      if (work1Modules.length > 0) {
+        w1ModHtml += '<tr class="total-row"><td colspan="3" class="text-right">ACTIVE TOTAL:</td>';
+        w1ModHtml += '<td class="text-right">₱' + w1ModActiveTot.toFixed(2) + '</td><td colspan="2"></td></tr>';
+        w1ModHtml += '<tr class="total-row"><td colspan="3" class="text-right">ALL TOTAL:</td>';
+        w1ModHtml += '<td class="text-right">₱' + w1ModTot.toFixed(2) + '</td><td colspan="2"></td></tr>';
       }
       
       document.getElementById('w1-mod-table').innerHTML = w1ModHtml;
       
-      // Work 2 Module table - Active entries only
+      // Work 2 Module table - All entries with transferred indicator
       let w2ModHtml = '';
       let w2ModTot = 0;
-      const w2ModActive = work2Modules.filter(e => !e.transferred);
-      const w2ModTransferred = work2Modules.filter(e => e.transferred);
+      let w2ModActiveTot = 0;
       
-      w2ModActive.forEach(e => {
-        w2ModHtml += '<tr><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
+      work2Modules.forEach(e => {
+        const isTransferred = e.transferred;
+        w2ModHtml += '<tr' + (isTransferred ? ' style="background: rgba(16, 185, 129, 0.05);"' : '') + '>';
+        w2ModHtml += '<td>' + e.date + (isTransferred ? ' <span style="color: #10b981;">✅</span>' : '') + '</td>';
+        w2ModHtml += '<td class="text-right">' + e.hours + 'h</td>';
         w2ModHtml += '<td class="text-right">₱' + e.rate + '</td>';
         w2ModHtml += '<td class="text-right">₱' + e.pay + '</td>';
         w2ModHtml += '<td>' + (e.notes || '-') + '</td>';
-        w2ModHtml += '<td class="text-center"><button class="btn-danger" onclick="deleteWork2Module(' + e.id + ')">🗑️</button></td></tr>';
+        w2ModHtml += '<td class="text-center">';
+        if (isTransferred) {
+          w2ModHtml += '<span style="color: #10b981; font-size: 12px;">Transferred</span>';
+        } else {
+          w2ModHtml += '<button class="btn-danger" onclick="deleteWork2Module(' + e.id + ')">🗑️</button>';
+        }
+        w2ModHtml += '</td></tr>';
         w2ModTot += parseFloat(e.pay);
+        if (!isTransferred) w2ModActiveTot += parseFloat(e.pay);
       });
-      if (w2ModActive.length > 0) {
-        w2ModHtml += '<tr class="total-row"><td colspan="3" class="text-right">ACTIVE TOTAL:</td>';
-        w2ModHtml += '<td class="text-right">₱' + w2ModTot.toFixed(2) + '</td><td colspan="2"></td></tr>';
-      }
       
-      // Add transferred module entries
-      if (w2ModTransferred.length > 0) {
-        w2ModHtml += '<tr style="background: rgba(100,116,139,0.1);"><td colspan="6" style="padding: 8px; font-weight: 600; color: #64748b;">📦 Transferred (' + w2ModTransferred.length + ')</td></tr>';
-        w2ModTransferred.forEach(e => {
-          w2ModHtml += '<tr style="opacity: 0.5; background: rgba(100,116,139,0.05);"><td>' + e.date + '</td><td class="text-right">' + e.hours + 'h</td>';
-          w2ModHtml += '<td class="text-right">₱' + e.rate + '</td>';
-          w2ModHtml += '<td class="text-right">₱' + e.pay + '</td>';
-          w2ModHtml += '<td>' + (e.notes || '-') + '</td>';
-          w2ModHtml += '<td class="text-center">✅</td></tr>';
-        });
+      if (work2Modules.length > 0) {
+        w2ModHtml += '<tr class="total-row"><td colspan="3" class="text-right">ACTIVE TOTAL:</td>';
+        w2ModHtml += '<td class="text-right">₱' + w2ModActiveTot.toFixed(2) + '</td><td colspan="2"></td></tr>';
+        w2ModHtml += '<tr class="total-row"><td colspan="3" class="text-right">ALL TOTAL:</td>';
+        w2ModHtml += '<td class="text-right">₱' + w2ModTot.toFixed(2) + '</td><td colspan="2"></td></tr>';
       }
       
       document.getElementById('w2-mod-table').innerHTML = w2ModHtml;
@@ -1316,26 +1269,6 @@
     // Set default month
     const now = new Date();
     document.getElementById('cutoff-month').value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-    
-    // Initialize dashboard month dropdown
-    const dashMonthDropdown = document.getElementById('dash-month');
-    const dashPeriodDropdown = document.getElementById('dash-period');
-    
-    // Populate last 6 months
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const value = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
-      const text = d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-      const option = document.createElement('option');
-      option.value = value;
-      option.textContent = text;
-      dashMonthDropdown.appendChild(option);
-    }
-    
-    // Set current month and determine cutoff period
-    dashMonthDropdown.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-    const currentDay = now.getDate();
-    dashPeriodDropdown.value = currentDay <= 15 ? '1' : '2';
     
     // Initialize
     loadData();

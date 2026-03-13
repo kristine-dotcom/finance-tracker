@@ -229,8 +229,8 @@
     
     <div class="tabs no-print">
       <div class="tab active" data-tab="dashboard">📊 Dashboard</div>
-      <div class="tab" data-tab="work1">⏰ Work 1</div>
-      <div class="tab" data-tab="work2">⏰ Work 2</div>
+      <div class="tab" data-tab="work1">⏰ Jason Cobine</div>
+      <div class="tab" data-tab="work2">⏰ David Perlov</div>
       <div class="tab" data-tab="invoice">📄 Invoice</div>
       <div class="tab" data-tab="budgets">💸 Budgets</div>
       <div class="tab" data-tab="salary">💰 Sahod</div>
@@ -271,12 +271,28 @@
           <strong>✅ NEW:</strong> Overnight shifts now supported! Enter 4:00 PM to 12:00 AM and it will calculate 8 hours correctly.
         </p>
       </div>
+      
+      <div class="card">
+        <h2>⚙️ Settings</h2>
+        <p class="mb-4" style="color: #94a3b8;">Customize work names for invoices and labels:</p>
+        <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+          <div>
+            <label style="display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px;">Work 1 Name:</label>
+            <input type="text" id="work1-name" placeholder="e.g., Jason Cobine" style="width: 100%;">
+          </div>
+          <div>
+            <label style="display: block; font-size: 12px; color: #94a3b8; margin-bottom: 5px;">Work 2 Name:</label>
+            <input type="text" id="work2-name" placeholder="e.g., David Perlov" style="width: 100%;">
+          </div>
+          <button onclick="saveWorkNames()">💾 Save Names</button>
+        </div>
+      </div>
     </div>
     
     <!-- Work 1 Tab -->
     <div id="tab-work1" class="tab-content hidden">
       <div class="card">
-        <h2>Work 1 Timesheet</h2>
+        <h2><span id="work1-title">Jason Cobine</span> Timesheet</h2>
         <p class="mb-4" style="color: #94a3b8;">Daily Rate: ₱1,000 | Hourly: ₱125 | OT: ₱187.50/hr (150%)</p>
         
         <div class="notice">
@@ -320,7 +336,7 @@
     <!-- Work 2 Tab -->
     <div id="tab-work2" class="tab-content hidden">
       <div class="card">
-        <h2>Work 2 Timesheet</h2>
+        <h2><span id="work2-title">David Perlov</span> Timesheet</h2>
         <p class="mb-4" style="color: #94a3b8;">Daily Rate: ₱1,200 | Hourly: ₱150 | OT: ₱225/hr (150%)</p>
         
         <div class="notice">
@@ -372,6 +388,20 @@
             <option value="2">2nd Half (16-End)</option>
           </select>
           <button onclick="generateInvoice()">Generate Invoice</button>
+        </div>
+        
+        <div style="margin-top: 15px; padding: 15px; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px;">
+          <p style="font-weight: 600; margin-bottom: 10px; color: #06b6d4;">📋 Select Work to Include:</p>
+          <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="include-work1" checked style="width: 18px; height: 18px; cursor: pointer;">
+              <span>Jason Cobine</span>
+            </label>
+            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+              <input type="checkbox" id="include-work2" checked style="width: 18px; height: 18px; cursor: pointer;">
+              <span>David Perlov</span>
+            </label>
+          </div>
         </div>
       </div>
       
@@ -456,12 +486,56 @@
   </div>
   
   <script>
+    // Work names - CUSTOMIZE HERE!
+    let work1Name = localStorage.getItem('work1Name') || 'Jason Cobine';
+    let work2Name = localStorage.getItem('work2Name') || 'David Perlov';
+    
     // Data storage
     let work1 = [];
     let work2 = [];
     let budgets = [];
     let expenses = [];
     let salaries = [];
+    
+    // Save work names
+    function saveWorkNames() {
+      const name1 = document.getElementById('work1-name').value.trim();
+      const name2 = document.getElementById('work2-name').value.trim();
+      
+      if (name1) {
+        work1Name = name1;
+        localStorage.setItem('work1Name', name1);
+      }
+      if (name2) {
+        work2Name = name2;
+        localStorage.setItem('work2Name', name2);
+      }
+      
+      updateLabels();
+      alert('Work names saved! Labels updated.');
+    }
+    
+    // Update all labels with custom names
+    function updateLabels() {
+      // Update tab labels
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        if (tab.dataset.tab === 'work1') tab.textContent = '⏰ ' + work1Name;
+        if (tab.dataset.tab === 'work2') tab.textContent = '⏰ ' + work2Name;
+      });
+      
+      // Update page headers
+      document.querySelector('#tab-work1 h2').textContent = work1Name + ' Timesheet';
+      document.querySelector('#tab-work2 h2').textContent = work2Name + ' Timesheet';
+      
+      // Update invoice checkboxes
+      document.getElementById('work1-label-invoice').textContent = work1Name;
+      document.getElementById('work2-label-invoice').textContent = work2Name;
+      
+      // Update settings inputs
+      document.getElementById('work1-name').value = work1Name;
+      document.getElementById('work2-name').value = work2Name;
+    }
     
     // Load data
     function loadData() {
@@ -572,6 +646,8 @@
     // Transfer to salary
     function transferToSalary(type) {
       const data = type === 'work1' ? work1 : work2;
+      const workName = type === 'work1' ? work1Name : work2Name;
+      
       if (data.length === 0) return alert('No entries to transfer!');
       
       const total = data.reduce((sum, e) => sum + parseFloat(e.total), 0);
@@ -583,7 +659,7 @@
         amount: total.toFixed(2),
         date: dates[dates.length - 1],
         period: period,
-        source: type === 'work1' ? 'Work 1' : 'Work 2',
+        source: workName,
         notes: data.length + ' days transferred'
       });
       
@@ -669,8 +745,11 @@
     function generateInvoice() {
       const month = document.getElementById('cutoff-month').value;
       const period = document.getElementById('cutoff-period').value;
+      const includeWork1 = document.getElementById('include-work1').checked;
+      const includeWork2 = document.getElementById('include-work2').checked;
       
       if (!month) return alert('Select month!');
+      if (!includeWork1 && !includeWork2) return alert('Please select at least one work to include!');
       
       const [year, monthNum] = month.split('-').map(Number);
       const startDay = period === '1' ? 1 : 16;
@@ -697,32 +776,38 @@
         'Period: ' + startDay + '-' + endDay + ' ' + monthName + ' ' + year;
       
       let html = '';
-      
-      html += '<h3 style="color: #10b981; margin-bottom: 15px;">Work 1</h3>';
-      html += '<table><thead><tr><th>Date</th><th>Time</th><th class="text-right">Hrs</th><th class="text-right">Pay</th></tr></thead><tbody>';
       let w1Total = 0;
-      filtered1.forEach(e => {
-        html += '<tr><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
-        html += '<td class="text-right">' + e.regHrs + 'h + ' + e.ot + 'h OT</td>';
-        html += '<td class="text-right">₱' + e.total + '</td></tr>';
-        w1Total += parseFloat(e.total);
-      });
-      html += '<tr class="total-row"><td colspan="3" class="text-right">Work 1 Subtotal:</td>';
-      html += '<td class="text-right">₱' + w1Total.toFixed(2) + '</td></tr>';
-      html += '</tbody></table><br><br>';
-      
-      html += '<h3 style="color: #06b6d4; margin-bottom: 15px;">Work 2</h3>';
-      html += '<table><thead><tr><th>Date</th><th>Time</th><th class="text-right">Hrs</th><th class="text-right">Pay</th></tr></thead><tbody>';
       let w2Total = 0;
-      filtered2.forEach(e => {
-        html += '<tr><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
-        html += '<td class="text-right">' + e.regHrs + 'h + ' + e.ot + 'h OT</td>';
-        html += '<td class="text-right">₱' + e.total + '</td></tr>';
-        w2Total += parseFloat(e.total);
-      });
-      html += '<tr class="total-row"><td colspan="3" class="text-right">Work 2 Subtotal:</td>';
-      html += '<td class="text-right">₱' + w2Total.toFixed(2) + '</td></tr>';
-      html += '</tbody></table>';
+      
+      // Work 1 Section (only if checked)
+      if (includeWork1) {
+        html += '<h3 style="color: #10b981; margin-bottom: 15px;">' + work1Name + '</h3>';
+        html += '<table><thead><tr><th>Date</th><th>Time</th><th class="text-right">Hrs</th><th class="text-right">Pay</th></tr></thead><tbody>';
+        filtered1.forEach(e => {
+          html += '<tr><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
+          html += '<td class="text-right">' + e.regHrs + 'h + ' + e.ot + 'h OT</td>';
+          html += '<td class="text-right">₱' + e.total + '</td></tr>';
+          w1Total += parseFloat(e.total);
+        });
+        html += '<tr class="total-row"><td colspan="3" class="text-right">' + work1Name + ' Subtotal:</td>';
+        html += '<td class="text-right">₱' + w1Total.toFixed(2) + '</td></tr>';
+        html += '</tbody></table><br><br>';
+      }
+      
+      // Work 2 Section (only if checked)
+      if (includeWork2) {
+        html += '<h3 style="color: #06b6d4; margin-bottom: 15px;">' + work2Name + '</h3>';
+        html += '<table><thead><tr><th>Date</th><th>Time</th><th class="text-right">Hrs</th><th class="text-right">Pay</th></tr></thead><tbody>';
+        filtered2.forEach(e => {
+          html += '<tr><td>' + e.date + '</td><td>' + e.timeIn + '-' + e.timeOut + '</td>';
+          html += '<td class="text-right">' + e.regHrs + 'h + ' + e.ot + 'h OT</td>';
+          html += '<td class="text-right">₱' + e.total + '</td></tr>';
+          w2Total += parseFloat(e.total);
+        });
+        html += '<tr class="total-row"><td colspan="3" class="text-right">' + work2Name + ' Subtotal:</td>';
+        html += '<td class="text-right">₱' + w2Total.toFixed(2) + '</td></tr>';
+        html += '</tbody></table>';
+      }
       
       document.getElementById('invoice-body').innerHTML = html;
       document.getElementById('invoice-total').textContent = 'GRAND TOTAL: ₱' + (w1Total + w2Total).toFixed(2);

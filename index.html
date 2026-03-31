@@ -237,7 +237,7 @@
   <div class="container">
     <div class="header">
       <h1>💰 Finance Tracker</h1>
-      <p style="color: #94a3b8;">Your Complete Work & Budget Manager</p>
+      <p style="color: #94a3b8;">Your Complete Work & Invoice Tracker</p>
       <p style="color: #10b981; font-size: 12px; margin-top: 10px;">✅ Overnight Shift Support Added!</p>
     </div>
     
@@ -248,8 +248,6 @@
       <div class="tab" data-tab="reports">📈 Reports</div>
       <div class="tab" data-tab="calendar">📅 Calendar</div>
       <div class="tab" data-tab="invoice">📄 Invoice</div>
-      <div class="tab" data-tab="budgets">💸 Budgets</div>
-      <div class="tab" data-tab="savings">🎯 Savings</div>
       <div class="tab" data-tab="salary">💰 Sahod</div>
     </div>
     
@@ -271,17 +269,12 @@
           <div class="stat-value" id="stat-earnings">₱0</div>
           <div class="stat-label">Total Earnings</div>
         </div>
-        <div class="stat-card">
-          <div style="font-size: 32px;">💸</div>
-          <div class="stat-value" id="stat-expenses">₱0</div>
-          <div class="stat-label">Total Expenses</div>
-        </div>
       </div>
       
       <div class="card">
         <h2>Welcome! 🎉</h2>
         <p style="line-height: 1.8; color: #cbd5e1;">
-          Track your work hours, generate invoices, manage budgets, and monitor expenses. 
+          Track your work hours, generate invoices, and view monthly reports. 
           All your data is saved automatically and available for invoice generation anytime!
         </p>
         <p style="margin-top: 15px; padding: 12px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; color: #10b981;">
@@ -512,38 +505,6 @@
       </div>
     </div>
     
-    <!-- Budgets Tab -->
-    <div id="tab-budgets" class="tab-content hidden">
-      <div class="card">
-        <h2>Add Budget</h2>
-        <div class="form-grid">
-          <input type="text" id="budget-cat" placeholder="Category (e.g., Food)">
-          <input type="number" id="budget-limit" placeholder="Monthly Limit">
-          <button onclick="addBudget()">+ Add Budget</button>
-        </div>
-      </div>
-      
-      <div class="card">
-        <h2 style="color: #ef4444;">Add Expense</h2>
-        <div class="form-grid">
-          <input type="number" id="expense-amount" placeholder="Amount">
-          <select id="expense-cat">
-            <option value="">Select Category</option>
-          </select>
-          <input type="date" id="expense-date">
-          <input type="text" id="expense-desc" placeholder="Description">
-          <button onclick="addExpense()">+ Add Expense</button>
-        </div>
-      </div>
-      
-      <div id="budget-list"></div>
-      
-      <div class="card">
-        <h2>Recent Expenses</h2>
-        <div id="expense-list"></div>
-      </div>
-    </div>
-    
     <!-- Salary Tab -->
     <div id="tab-salary" class="tab-content hidden">
       <div class="card">
@@ -599,22 +560,6 @@
         <h3 id="calendar-date-title"></h3>
         <div id="calendar-day-details"></div>
       </div>
-    </div>
-    
-    <!-- Savings Goals Tab -->
-    <div id="tab-savings" class="tab-content hidden">
-      <div class="card">
-        <h2>Add Savings Goal</h2>
-        <div class="form-grid">
-          <input type="text" id="goal-name" placeholder="Goal Name (e.g., New Laptop)">
-          <input type="number" id="goal-target" placeholder="Target Amount">
-          <input type="number" id="goal-current" placeholder="Current Savings" value="0">
-          <button onclick="addSavingsGoal()">+ Add Goal</button>
-        </div>
-      </div>
-      
-      <div id="savings-goals-list"></div>
-    </div>
   </div>
   
   <script>
@@ -627,10 +572,7 @@
     let work2 = [];
     let work1Modules = []; // Module work for Jason Cobine
     let work2Modules = []; // Module work for David Perlov
-    let budgets = [];
-    let expenses = [];
     let salaries = [];
-    let savingsGoals = []; // Savings goals
     let invoiceCounter = parseInt(localStorage.getItem('invoiceCounter') || '0'); // Auto-increment invoice number
     let calendarMonth = new Date().getMonth();
     let calendarYear = new Date().getFullYear();
@@ -681,10 +623,7 @@
       work2 = JSON.parse(localStorage.getItem('work2') || '[]');
       work1Modules = JSON.parse(localStorage.getItem('work1Modules') || '[]');
       work2Modules = JSON.parse(localStorage.getItem('work2Modules') || '[]');
-      budgets = JSON.parse(localStorage.getItem('budgets') || '[]');
-      expenses = JSON.parse(localStorage.getItem('expenses') || '[]');
       salaries = JSON.parse(localStorage.getItem('salaries') || '[]');
-      savingsGoals = JSON.parse(localStorage.getItem('savingsGoals') || '[]');
       render();
     }
     
@@ -913,56 +852,6 @@
     }
     
     // Add Budget
-    function addBudget() {
-      const cat = document.getElementById('budget-cat').value;
-      const limit = parseFloat(document.getElementById('budget-limit').value);
-      
-      if (!cat || !limit) return alert('Fill all fields!');
-      
-      budgets.push({ id: Date.now(), cat, limit, spent: 0 });
-      save('budgets', budgets);
-      document.getElementById('budget-cat').value = '';
-      document.getElementById('budget-limit').value = '';
-    }
-    
-    // Add Expense
-    function addExpense() {
-      const amount = parseFloat(document.getElementById('expense-amount').value);
-      const cat = document.getElementById('expense-cat').value;
-      const date = document.getElementById('expense-date').value;
-      const desc = document.getElementById('expense-desc').value;
-      
-      if (!amount || !cat || !date) return alert('Fill all fields!');
-      
-      expenses.push({ id: Date.now(), amount, cat, date, desc });
-      
-      const budget = budgets.find(b => b.cat === cat);
-      if (budget) {
-        budget.spent = (budget.spent || 0) + amount;
-      }
-      
-      save('expenses', expenses);
-      save('budgets', budgets);
-      document.getElementById('expense-amount').value = '';
-      document.getElementById('expense-date').value = '';
-      document.getElementById('expense-desc').value = '';
-    }
-    
-    // Delete Expense
-    function deleteExpense(id) {
-      const expense = expenses.find(e => e.id === id);
-      if (!expense) return;
-      
-      const budget = budgets.find(b => b.cat === expense.cat);
-      if (budget) {
-        budget.spent = Math.max(0, (budget.spent || 0) - expense.amount);
-      }
-      
-      expenses = expenses.filter(e => e.id !== id);
-      save('expenses', expenses);
-      save('budgets', budgets);
-    }
-    
     // Add Salary
     function addSalary() {
       const amount = parseFloat(document.getElementById('salary-amount').value);
@@ -1001,26 +890,26 @@
       const endDay = period === '1' ? 15 : new Date(year, monthNum, 0).getDate();
       
       const startDate = new Date(year, monthNum - 1, startDay);
-      const endDate = new Date(year, monthNum - 1, endDay);
+      const endDate = new Date(year, monthNum - 1, endDay, 23, 59, 59, 999); // End of day to include last day
       
       const filtered1 = work1.filter(e => {
         const d = new Date(e.date);
-        return d >= startDate && d <= endDate;
+        return d >= startDate && d <= endDate && !e.transferred;
       });
       
       const filtered2 = work2.filter(e => {
         const d = new Date(e.date);
-        return d >= startDate && d <= endDate;
+        return d >= startDate && d <= endDate && !e.transferred;
       });
       
       const filtered1Modules = work1Modules.filter(e => {
         const d = new Date(e.date);
-        return d >= startDate && d <= endDate;
+        return d >= startDate && d <= endDate && !e.transferred;
       });
       
       const filtered2Modules = work2Modules.filter(e => {
         const d = new Date(e.date);
-        return d >= startDate && d <= endDate;
+        return d >= startDate && d <= endDate && !e.transferred;
       });
       
       const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -1123,43 +1012,6 @@
     }
     
     // Savings Goals Functions
-    function addSavingsGoal() {
-      const name = document.getElementById('goal-name').value.trim();
-      const target = parseFloat(document.getElementById('goal-target').value);
-      const current = parseFloat(document.getElementById('goal-current').value) || 0;
-      
-      if (!name || !target || target <= 0) return alert('Please fill all fields with valid amounts!');
-      
-      savingsGoals.push({
-        id: Date.now(),
-        name,
-        target,
-        current
-      });
-      
-      save('savingsGoals', savingsGoals);
-      document.getElementById('goal-name').value = '';
-      document.getElementById('goal-target').value = '';
-      document.getElementById('goal-current').value = '0';
-    }
-    
-    function updateSavingsGoal(id, amount) {
-      const goal = savingsGoals.find(g => g.id === id);
-      if (!goal) return;
-      
-      const addAmount = parseFloat(prompt('Add to savings:', '0'));
-      if (isNaN(addAmount) || addAmount <= 0) return;
-      
-      goal.current = Math.min(parseFloat(goal.current) + addAmount, parseFloat(goal.target));
-      save('savingsGoals', savingsGoals);
-    }
-    
-    function deleteSavingsGoal(id) {
-      if (!confirm('Delete this savings goal?')) return;
-      savingsGoals = savingsGoals.filter(g => g.id !== id);
-      save('savingsGoals', savingsGoals);
-    }
-    
     // Monthly Report Function
     function generateMonthlyReport() {
       const monthValue = document.getElementById('report-month').value;
@@ -1167,7 +1019,8 @@
       
       const [year, month] = monthValue.split('-').map(Number);
       const startDate = new Date(year, month - 1, 1);
-      const endDate = new Date(year, month, 0);
+      const lastDay = new Date(year, month, 0).getDate();
+      const endDate = new Date(year, month - 1, lastDay, 23, 59, 59, 999); // End of last day
       
       const w1Entries = work1.filter(e => {
         const d = new Date(e.date);
@@ -1338,12 +1191,10 @@
       const totalHrs = work1.filter(e => !e.transferred).reduce((s, e) => s + parseFloat(e.regHrs || 0), 0) + 
                        work2.filter(e => !e.transferred).reduce((s, e) => s + parseFloat(e.regHrs || 0), 0);
       const totalEarn = salaries.reduce((s, e) => s + parseFloat(e.amount), 0);
-      const totalExp = expenses.reduce((s, e) => s + parseFloat(e.amount), 0);
       
       document.getElementById('stat-days').textContent = totalDays;
       document.getElementById('stat-hours').textContent = totalHrs.toFixed(1) + 'h';
       document.getElementById('stat-earnings').textContent = '₱' + totalEarn.toFixed(2);
-      document.getElementById('stat-expenses').textContent = '₱' + totalExp.toFixed(2);
       
       // Work 1 table - All entries with transferred indicator
       let w1Html = '';
@@ -1477,37 +1328,6 @@
       
       document.getElementById('w2-mod-table').innerHTML = w2ModHtml;
       
-      // Budget category dropdown
-      let catHtml = '<option value="">Select Category</option>';
-      budgets.forEach(b => {
-        catHtml += '<option value="' + b.cat + '">' + b.cat + '</option>';
-      });
-      document.getElementById('expense-cat').innerHTML = catHtml;
-      
-      // Budget list
-      let budgetHtml = '';
-      budgets.forEach(b => {
-        const pct = (b.spent / b.limit) * 100;
-        const color = pct >= 100 ? '#ef4444' : pct >= 80 ? '#eab308' : '#10b981';
-        budgetHtml += '<div class="card" style="background: rgba(16,185,129,0.05);"><h3>' + b.cat + '</h3>';
-        budgetHtml += '<p style="color: #94a3b8;">₱' + (b.spent || 0).toFixed(2) + ' / ₱' + b.limit + '</p>';
-        budgetHtml += '<div style="width: 100%; background: #334155; height: 12px; border-radius: 6px; margin: 10px 0;">';
-        budgetHtml += '<div style="width: ' + Math.min(pct, 100) + '%; background: ' + color + '; height: 12px; border-radius: 6px;"></div></div>';
-        budgetHtml += '<p style="font-size: 12px; color: #64748b;">' + pct.toFixed(1) + '% used</p></div>';
-      });
-      document.getElementById('budget-list').innerHTML = budgetHtml;
-      
-      // Expense list
-      let expHtml = '';
-      expenses.slice(0, 10).forEach(e => {
-        expHtml += '<div style="display: flex; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 8px; margin-bottom: 8px;">';
-        expHtml += '<div><div style="font-weight: 600;">' + e.desc + '</div>';
-        expHtml += '<div style="font-size: 13px; color: #94a3b8;">' + e.cat + ' • ' + e.date + '</div></div>';
-        expHtml += '<div style="display: flex; align-items: center; gap: 10px;"><span style="color: #ef4444; font-weight: bold;">-₱' + e.amount.toFixed(2) + '</span>';
-        expHtml += '<button class="btn-danger" onclick="deleteExpense(' + e.id + ')">🗑️</button></div></div>';
-      });
-      document.getElementById('expense-list').innerHTML = expHtml || '<p style="color: #64748b;">No expenses yet</p>';
-      
       // Salary list
       let salHtml = '';
       salaries.forEach(s => {
@@ -1520,31 +1340,6 @@
         salHtml += '</div><button class="btn-danger" onclick="deleteSalary(' + s.id + ')">🗑️</button></div>';
       });
       document.getElementById('salary-list').innerHTML = salHtml || '<p style="color: #64748b;">No salary records yet</p>';
-      
-      // Savings Goals list
-      let goalsHtml = '';
-      savingsGoals.forEach(g => {
-        const percent = (parseFloat(g.current) / parseFloat(g.target)) * 100;
-        const color = percent >= 100 ? '#10b981' : percent >= 75 ? '#06b6d4' : '#f59e0b';
-        
-        goalsHtml += '<div class="card" style="background: rgba(16,185,129,0.05);">';
-        goalsHtml += '<div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">';
-        goalsHtml += '<h3>' + g.name + '</h3>';
-        goalsHtml += '<button class="btn-danger" onclick="deleteSavingsGoal(' + g.id + ')">🗑️</button>';
-        goalsHtml += '</div>';
-        goalsHtml += '<p style="color: #94a3b8; margin-bottom: 10px;">₱' + parseFloat(g.current).toFixed(2) + ' / ₱' + parseFloat(g.target).toFixed(2) + '</p>';
-        goalsHtml += '<div style="width: 100%; background: #334155; height: 16px; border-radius: 8px; margin-bottom: 10px; overflow: hidden;">';
-        goalsHtml += '<div style="width: ' + Math.min(percent, 100) + '%; background: ' + color + '; height: 16px; transition: width 0.3s;"></div></div>';
-        goalsHtml += '<div style="display: flex; justify-content: space-between; align-items: center;">';
-        goalsHtml += '<p style="font-size: 14px; color: #64748b;">' + percent.toFixed(1) + '% complete</p>';
-        if (percent < 100) {
-          goalsHtml += '<button class="btn-secondary" onclick="updateSavingsGoal(' + g.id + ')" style="padding: 8px 16px; font-size: 13px;">+ Add Savings</button>';
-        } else {
-          goalsHtml += '<span style="color: #10b981; font-weight: 600;">✅ Goal Reached!</span>';
-        }
-        goalsHtml += '</div></div>';
-      });
-      document.getElementById('savings-goals-list').innerHTML = goalsHtml;
     }
     
     // Tab switching
